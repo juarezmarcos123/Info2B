@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Seguimiento de trabajos - Info.2B</title>
+  <link rel="stylesheet" href="css/estilos.css" />
+  <style>
+    body {
+      background: #0d1117;
+      color: #e0e0e0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    header {
+      background: #161b22;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    nav a {
+      color: #58a6ff;
+      margin-left: 1.2rem;
+      text-decoration: none;
+      font-weight: 500;
+    }
+    nav a:hover {
+      text-decoration: underline;
+    }
+
+    .contenedor {
+      padding: 3rem 1.5rem;
+      max-width: 960px;
+      margin: auto;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 2rem;
+      color: #00e676;
+      background: linear-gradient(90deg, #00e676, #00bfa5, #00e676);
+      background-size: 200% auto;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: shine 4s linear infinite;
+    }
+
+    @keyframes shine {
+      to {
+        background-position: 200% center;
+      }
+    }
+
+    .busqueda {
+      text-align: center;
+      margin-bottom: 2.5rem;
+    }
+
+    .busqueda input {
+      padding: 0.7rem;
+      width: 90%;
+      max-width: 400px;
+      border-radius: 8px;
+      border: none;
+      outline: none;
+      background-color: #21262d;
+      color: #fff;
+      font-size: 1rem;
+    }
+
+    .resultado {
+      background: #1c2128;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 0 12px #00000060;
+      animation: fadeIn 0.4s ease-in-out;
+    }
+
+    .resultado h3 {
+      color: #58a6ff;
+      margin-bottom: 1rem;
+    }
+
+    .resultado p {
+      color: #c9d1d9;
+      margin: 0.3rem 0;
+    }
+
+    .no-encontrado {
+      color: #ff6b6b;
+      text-align: center;
+      margin-top: 1rem;
+    }
+
+    footer {
+      margin-top: 4rem;
+      padding: 2rem;
+      text-align: center;
+      background: #161b22;
+      color: #777;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(15px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Info.2B</h1>
+    <nav>
+      <a href="index.html">Inicio</a>
+      <a href="servicios.html">Servicios</a>
+      <a href="seguimiento.html">Seguimiento</a>
+      <a href="blog.html">Blog</a>
+      <a href="contacto.html">Contacto</a>
+    </nav>
+  </header>
+
+  <main class="contenedor">
+    <h1>Seguimiento de Trabajo</h1>
+
+    <div class="busqueda">
+      <input type="text" id="buscador" placeholder="🔍 Ingresa tu código de seguimiento" />
+    </div>
+
+    <div id="resultado" class="resultado" style="display: none;"></div>
+    <p id="noEncontrado" class="no-encontrado" style="display: none;">
+      ❌ No se encontró ningún trabajo con ese código.
+    </p>
+  </main>
+
+  <footer>
+    &copy; 2025 Info.2B - Seguimiento técnico transparente y en tiempo real
+  </footer>
+
+  <!-- Firebase SDK -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js";
+  import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyBJoYFUAJLkaeXA4Lu6T_GujtIgs96Ka0I",
+    authDomain: "info2b-firebase.firebaseapp.com",
+    projectId: "info2b-firebase",
+    storageBucket: "info2b-firebase.appspot.com",
+    messagingSenderId: "660484913472",
+    appId: "1:660484913472:web:e6aee88dc824a0c3e362a5"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  document.addEventListener("DOMContentLoaded", () => {
+    const buscador = document.getElementById("buscador");
+    const resultadoDiv = document.getElementById("resultado");
+    const noEncontrado = document.getElementById("noEncontrado");
+
+    buscador.addEventListener("input", async () => {
+      const valor = buscador.value.trim().toUpperCase();
+
+      if (!valor) {
+        resultadoDiv.style.display = 'none';
+        noEncontrado.style.display = 'none';
+        return;
+      }
+
+      try {
+        const trabajosRef = collection(db, "trabajos");
+        const q = query(trabajosRef, where("codigo_seguimiento", "==", valor));
+        const querySnapshot = await getDocs(q);
+
+        if (querySnapshot.empty) {
+          resultadoDiv.style.display = 'none';
+          noEncontrado.style.display = 'block';
+          return;
+        }
+
+        const docSnap = querySnapshot.docs[0];
+        const trabajo = docSnap.data();
+
+        const fechaIngreso = trabajo.fecha_ingreso?.toDate?.().toLocaleDateString?.() || "No disponible";
+        const fechaEntrega = trabajo.fecha_entrega?.toDate?.().toLocaleDateString?.() || "No registrada";
+
+        resultadoDiv.innerHTML = `
+          <h3 style="color:#64ffda;">🔍 Detalles del trabajo</h3>
+          <p><strong>📌 Cliente:</strong> ${trabajo.nombre_completo || "No registrado"}</p>
+          <p><strong>💻 Equipo:</strong> ${trabajo.tipo_equipo || "No registrado"}</p>
+          <p><strong>🛠 Problema:</strong> ${trabajo.problema || "No registrado"}</p>
+          <p><strong>📈 Estado:</strong> <span style="color:#00e676">${trabajo.estado || "Sin estado"}</span></p>
+          <p><strong>📞 Contacto:</strong> ${trabajo.telefono || "No registrado"}</p>
+          <p><strong>📅 Fecha de ingreso:</strong> ${fechaIngreso}</p>
+          <p><strong>📅 Fecha de entrega:</strong> ${fechaEntrega}</p>
+        `;
+
+        resultadoDiv.style.display = 'block';
+        noEncontrado.style.display = 'none';
+      } catch (error) {
+        console.error("❌ Error al buscar:", error);
+        resultadoDiv.innerHTML = `<p style='color:red;'>Error al buscar. Inténtalo más tarde.</p>`;
+        resultadoDiv.style.display = 'block';
+        noEncontrado.style.display = 'none';
+      }
+    });
+  });
+</script>
+</body>
+</html>

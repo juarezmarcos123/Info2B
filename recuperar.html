@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Recuperar Código - Info.2B</title>
+  <style>
+    body {
+      background: #0e0e0e;
+      color: #f0f0f0;
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+
+    header {
+      background: #151515;
+      padding: 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    header h1 {
+      margin: 0;
+      color: #00e5ff;
+    }
+
+    nav a {
+      color: #64ffda;
+      margin-left: 1rem;
+      text-decoration: none;
+    }
+
+    nav a:hover {
+      text-decoration: underline;
+    }
+
+    main {
+      max-width: 600px;
+      margin: 3rem auto;
+      padding: 2rem;
+      background: #1c1c1c;
+      border-radius: 12px;
+      box-shadow: 0 0 10px #00000088;
+    }
+
+    h2 {
+      text-align: center;
+      color: #00e5ff;
+      margin-bottom: 2rem;
+    }
+
+    label {
+      font-weight: bold;
+      color: #80cbc4;
+      display: block;
+      margin-bottom: 0.3rem;
+    }
+
+    input, select, button {
+      width: 100%;
+      padding: 0.8rem;
+      margin-bottom: 1rem;
+      border: none;
+      border-radius: 6px;
+      background: #292929;
+      color: #fff;
+      font-size: 1rem;
+    }
+
+    button {
+      background: #00e676;
+      color: #000;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #00c853;
+    }
+
+    #resultado {
+      background: #1b2a21;
+      color: #a5f2c4;
+      padding: 1.5rem;
+      border-left: 5px solid #00e676;
+      border-radius: 10px;
+      display: none;
+      font-size: 1.1rem;
+      margin-top: 2rem;
+    }
+
+    code {
+      background: #2c2c2c;
+      padding: 0.4rem 0.7rem;
+      border-radius: 6px;
+      font-size: 1.2rem;
+      display: inline-block;
+      margin-top: 0.5rem;
+    }
+
+    .botones {
+      margin-top: 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .botones a {
+      text-decoration: none;
+      padding: 0.6rem 1.2rem;
+      border-radius: 6px;
+      font-weight: bold;
+      color: #fff;
+    }
+
+    .botones a.seguimiento {
+      background: #2979ff;
+    }
+
+    .botones a.inicio {
+      background: #424242;
+    }
+
+    .error {
+      color: #ff5252;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Info.2B</h1>
+    <nav>
+      <a href="index.html">Inicio</a>
+      <a href="servicios.html">Servicios</a>
+      <a href="seguimiento.html">Seguimiento</a>
+      <a href="blog.html">Blog</a>
+      <a href="contacto.html">Contacto</a>
+    </nav>
+  </header>
+
+  <main>
+    <h2>Recuperar Código de Seguimiento</h2>
+    <form id="formRecuperacion">
+      <label for="metodo">¿Cómo desea recibir su código?</label>
+      <select id="metodo" required>
+        <option value="">-- Seleccione --</option>
+        <option value="correo">Correo electrónico</option>
+        <option value="whatsapp">WhatsApp</option>
+      </select>
+
+      <label for="dpi">Ingrese su número de DPI</label>
+      <input type="text" id="dpi" required
+       placeholder="Ej. 1234 56789 0101"
+       pattern="^\d{4}\s\d{5}\s\d{4}$"
+       title="Debe ingresar el DPI con espacios. Ej: 1234 56789 0101" />
+
+      <button type="submit">Recuperar código</button>
+    </form>
+
+    <div id="resultado"></div>
+  </main>
+
+  <script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js';
+    import { getFirestore, collection, query, where, getDocs } from 'https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore.js';
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBJoYFUAJLkaeXA4Lu6T_GujtIgs96Ka0I",
+      authDomain: "info2b-firebase.firebaseapp.com",
+      projectId: "info2b-firebase",
+      storageBucket: "info2b-firebase.appspot.com",
+      messagingSenderId: "660484913472",
+      appId: "1:660484913472:web:e6aee88dc824a0c3e362a5"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const form = document.getElementById("formRecuperacion");
+    const resultado = document.getElementById("resultado");
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      resultado.style.display = 'none';
+      resultado.innerHTML = '';
+      resultado.classList.remove("error");
+
+      const metodo = document.getElementById("metodo").value;
+      const dpi = document.getElementById("dpi").value.trim();
+
+      if (!dpi || !metodo) {
+        resultado.innerHTML = "<span class='error'>⚠️ Por favor complete todos los campos.</span>";
+        resultado.style.display = 'block';
+        return;
+      }
+
+      try {
+        const trabajosRef = collection(db, "trabajos");
+        const q = query(trabajosRef, where("dpi", "==", dpi));
+        const querySnapshot = await getDocs(q);
+
+        if (querySnapshot.empty) {
+          resultado.innerHTML = "<span class='error'>❌ No se encontró ningún código con ese DPI.</span>";
+          resultado.style.display = 'block';
+          return;
+        }
+
+        let codigo;
+        querySnapshot.forEach(doc => {
+          const data = doc.data();
+          codigo = data.codigo_seguimiento;
+        });
+
+        if (metodo === "correo") {
+          resultado.innerHTML = `
+            <h3 style="color:#64ffda;">🔐 Código encontrado</h3>
+            <p><strong>Código de seguimiento:</strong></p>
+            <code id="codigoRecuperado">${codigo}</code>
+            <button onclick="copiarCodigo()" style="margin-top: 1rem; padding: 0.4rem 0.8rem; background:#00e676; color:#000; border:none; border-radius:6px; cursor:pointer;">📋 Copiar</button>
+            <div class="botones">
+            </div>
+          `;
+          resultado.style.display = 'block';
+        } else if (metodo === "whatsapp") {
+          const mensaje = `Hola, soy usuario de Info.2B. Mi código de seguimiento es: ${codigo}`;
+          const numero = "502" + dpi.slice(0, 8); // Ajusta según el formato de teléfono si lo deseas
+          const url = `https://wa.me/${numero}?text=${encodeURIComponent(mensaje)}`;
+          window.open(url, "_blank");
+        }
+
+      } catch (error) {
+        resultado.innerHTML = `<span class='error'>❌ Error: ${error.message}</span>`;
+        resultado.style.display = 'block';
+      }
+    });
+  </script>
+
+  <script>
+    function copiarCodigo() {
+      const codigo = document.getElementById("codigoRecuperado").innerText;
+      navigator.clipboard.writeText(codigo)
+        .then(() => alert("✅ Código copiado al portapapeles"))
+        .catch(() => alert("❌ No se pudo copiar el código"));
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mi Cuenta - Info.2B</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --primary: #00ffc3;
+      --primary-dark: #00d4a7;
+      --dark: #0f172a;
+      --darker: #0b1120;
+      --light: #f8fafc;
+      --gray: #94a3b8;
+      --glass-effect: rgba(15, 23, 42, 0.7);
+      --border-radius: 16px;
+      --card-bg: rgba(15, 23, 42, 0.6);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, var(--darker), var(--dark));
+      color: var(--light);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .container {
+      display: flex;
+      flex: 1;
+    }
+
+    aside {
+      width: 300px;
+      background: var(--glass-effect);
+      backdrop-filter: blur(10px);
+      padding: 2rem 1.5rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      border-right: 1px solid rgba(0, 255, 195, 0.1);
+      position: relative;
+    }
+
+    .profile-container {
+      position: relative;
+      margin-bottom: 1.5rem;
+    }
+
+    aside img {
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid var(--primary);
+      box-shadow: 0 0 20px rgba(0, 255, 195, 0.3);
+      transition: all 0.3s ease;
+    }
+
+    aside img:hover {
+      box-shadow: 0 0 25px rgba(0, 255, 195, 0.5);
+    }
+
+    #editarFotoBtn {
+      background: transparent;
+      color: var(--primary);
+      border: 1px solid var(--primary);
+      padding: 0.6rem 1.5rem;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-top: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    #editarFotoBtn:hover {
+      background: rgba(0, 255, 195, 0.1);
+    }
+
+    .profile-info {
+      text-align: center;
+      margin-top: 1rem;
+    }
+
+    .profile-info h2 {
+      font-size: 1.5rem;
+      margin-bottom: 0.5rem;
+      color: var(--primary);
+    }
+
+    .profile-info p {
+      color: var(--gray);
+      font-style: italic;
+      margin-top: 1rem;
+    }
+
+    .hora-personalizada {
+      margin-top: 1.5rem;
+      text-align: center;
+      padding: 0.8rem;
+      background: rgba(0, 255, 195, 0.1);
+      border-radius: var(--border-radius);
+      border: 1px solid rgba(0, 255, 195, 0.2);
+    }
+
+    .hora-personalizada .hora {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--primary);
+    }
+
+    .hora-personalizada .frase {
+      font-size: 0.9rem;
+      margin-top: 0.5rem;
+      color: var(--gray);
+    }
+
+    main {
+      flex: 1;
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+
+    .bienvenida {
+      text-align: center;
+      font-size: 1.5rem;
+      background: linear-gradient(90deg, var(--primary), #00e6b0);
+      color: var(--dark);
+      padding: 1rem;
+      border-radius: var(--border-radius);
+      font-weight: bold;
+      box-shadow: 0 4px 15px rgba(0, 230, 176, 0.3);
+    }
+
+    .card {
+      background: var(--card-bg);
+      border-radius: var(--border-radius);
+      padding: 1.5rem;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    .card h3 {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 1.5rem;
+      color: var(--primary);
+      font-size: 1.2rem;
+    }
+
+    .info {
+      line-height: 1.8;
+    }
+
+    .info strong {
+      color: var(--primary);
+    }
+
+    .btn-peligro {
+      background: linear-gradient(90deg, #ff6b6b, #ff4f4f);
+      color: white;
+      border: none;
+      padding: 0.8rem 1.5rem;
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all 0.3s ease;
+      font-weight: 500;
+    }
+
+    .btn-peligro:hover {
+      background: linear-gradient(90deg, #ff4f4f, #ff3838);
+      box-shadow: 0 0 15px rgba(255, 107, 107, 0.4);
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: var(--dark);
+      color: white;
+      padding: 1rem 1.5rem;
+      border-radius: 8px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      z-index: 1000;
+      transform: translateY(100px);
+      opacity: 0;
+      transition: all 0.3s ease;
+    }
+
+    .toast.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    .toast.success {
+      border-left: 4px solid var(--primary);
+    }
+
+    .toast.error {
+      border-left: 4px solid #ff6b6b;
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        flex-direction: column;
+      }
+
+      aside {
+        width: 100%;
+        border-right: none;
+        border-bottom: 1px solid rgba(0, 255, 195, 0.1);
+      }
+
+      main {
+        padding: 1.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <aside>
+      <div class="profile-container">
+        <img id="fotoPerfil" src="https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png" alt="Foto de perfil">
+      </div>
+      <input type="file" id="inputFoto" accept="image/*" style="display: none;">
+      <button id="editarFotoBtn"><i class="fas fa-camera"></i> Editar foto</button>
+      
+      <div class="profile-info">
+        <h2 id="nombreAside">Usuario</h2>
+        <p>“Aquí todo se siente un poco más tuyo”</p>
+      </div>
+
+      <div class="hora-personalizada">
+        <div id="horaActual" class="hora">00:00:00</div>
+        <div id="fraseTiempo" class="frase">Cargando...</div>
+      </div>
+    </aside>
+    
+    <main>
+      <div id="mensajeBienvenida" class="bienvenida" style="display:none;">¡Bienvenido!</div>
+      
+      <div class="card card-info-personal">
+        <h3><i class="fas fa-user-circle"></i> Información personal</h3>
+        <div class="info" id="infoPersonal">Cargando datos...</div>
+      </div>
+      
+      <div class="card card-acciones">
+        <h3><i class="fas fa-bolt"></i> Acciones rápidas</h3>
+        <button id="logoutBtn" class="btn-peligro"><i class="fas fa-sign-out-alt"></i> Cerrar sesión</button>
+      </div>
+    </main>
+  </div>
+
+  <div id="toast" class="toast">
+    <i class="fas fa-check-circle"></i>
+    <span id="toast-message"></span>
+  </div>
+
+  <script>
+    // Función para mostrar notificación
+    function showToast(message, type = "success") {
+      const toast = document.getElementById("toast");
+      const toastMessage = document.getElementById("toast-message");
+      
+      toastMessage.textContent = message;
+      toast.className = `toast ${type} show`;
+      
+      setTimeout(() => {
+        toast.classList.remove("show");
+      }, 3000);
+    }
+
+    // Función para actualizar la hora y la frase según el momento del día
+    function actualizarHora() {
+      const ahora = new Date();
+      const horas = ahora.getHours().toString().padStart(2, '0');
+      const minutos = ahora.getMinutes().toString().padStart(2, '0');
+      const segundos = ahora.getSeconds().toString().padStart(2, '0');
+      
+      document.getElementById('horaActual').textContent = `${horas}:${minutos}:${segundos}`;
+      
+      // Determinar la frase según la hora del día
+      let frase = "";
+      const hora = parseInt(horas);
+      
+      if (hora >= 5 && hora < 12) {
+        frase = "¡Buenos días! Que tengas un día productivo.";
+      } else if (hora >= 12 && hora < 18) {
+        frase = "¡Buenas tardes! Espero que tu día vaya excelente.";
+      } else if (hora >= 18 && hora < 22) {
+        frase = "¡Buenas noches! Espero que hayas tenido un gran día.";
+      } else {
+        frase = "¡Buenas noches! Que descanses.";
+      }
+      
+      document.getElementById('fraseTiempo').textContent = frase;
+    }
+
+    // Inicializar la hora y actualizar cada segundo
+    actualizarHora();
+    setInterval(actualizarHora, 1000);
+
+    // Simulación de datos de usuario (en un caso real, estos vendrían de Firebase)
+    function cargarDatosUsuario() {
+      document.getElementById('nombreAside').textContent = 'Carlos Martínez';
+      document.getElementById('mensajeBienvenida').textContent = '¡Bienvenido, Carlos!';
+      document.getElementById('mensajeBienvenida').style.display = 'block';
+      
+      document.getElementById('infoPersonal').innerHTML = `
+        <p><strong>Nombre:</strong> Carlos Martínez</p>
+        <p><strong>DPI:</strong> 1234 56789 0101</p>
+        <p><strong>Correo:</strong> carlos.martinez@email.com</p>
+        <p><strong>Teléfono:</strong> +502 1234 5678</p>
+        <p><strong>Dirección:</strong> Ciudad de Guatemala, Guatemala</p>
+      `;
+    }
+
+    // Función para simular la subida de una foto de perfil
+    function setupFotoPerfil() {
+      const editarFotoBtn = document.getElementById("editarFotoBtn");
+      const inputFoto = document.getElementById("inputFoto");
+      const fotoPerfil = document.getElementById("fotoPerfil");
+      
+      editarFotoBtn.addEventListener("click", () => inputFoto.click());
+      
+      inputFoto.addEventListener("change", function(e) {
+        const archivo = e.target.files[0];
+        if (!archivo) return;
+        
+        // Validar que sea una imagen
+        if (!archivo.type.match('image.*')) {
+          showToast("Por favor, selecciona una imagen válida", "error");
+          return;
+        }
+        
+        // Mostrar estado de carga
+        const originalText = editarFotoBtn.innerHTML;
+        editarFotoBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Subiendo...';
+        editarFotoBtn.disabled = true;
+        
+        // Simular la subida de la imagen (en un caso real, esto se conectaría a Firebase)
+        setTimeout(() => {
+          const reader = new FileReader();
+          reader.onload = function(e) {
+            fotoPerfil.src = e.target.result;
+            showToast("Foto de perfil actualizada correctamente", "success");
+            editarFotoBtn.innerHTML = '<i class="fas fa-camera"></i> Editar foto';
+            editarFotoBtn.disabled = false;
+          };
+          reader.readAsDataURL(archivo);
+        }, 1500);
+      });
+    }
+
+    // Configurar el botón de cerrar sesión
+    function setupCerrarSesion() {
+      document.getElementById('logoutBtn').addEventListener('click', function() {
+        if (confirm('¿Estás seguro de que deseas cerrar sesión?')) {
+          // Mostrar estado de carga
+          this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Cerrando sesión...';
+          this.disabled = true;
+          
+          // Simular cierre de sesión (en un caso real, esto se conectaría a Firebase Auth)
+          setTimeout(() => {
+            showToast('Sesión cerrada correctamente', 'success');
+            // Redirigir a la página de login después de un breve delay
+            setTimeout(() => {
+              window.location.href = 'login.html';
+            }, 1000);
+          }, 1000);
+        }
+      });
+    }
+
+    // Inicializar la aplicación cuando el DOM esté listo
+    document.addEventListener('DOMContentLoaded', function() {
+      cargarDatosUsuario();
+      setupFotoPerfil();
+      setupCerrarSesion();
+      
+      // Mostrar mensaje de bienvenida después de un breve delay
+      setTimeout(() => {
+        showToast('Sesión iniciada correctamente');
+      }, 1000);
+    });
+  </script>
+</body>
+</html>

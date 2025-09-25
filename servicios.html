@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Servicios - Info.2B</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap">
+
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Roboto', sans-serif;
+      background-color: #0f0f0f;
+      color: #f5f5f5;
+    }
+
+    header {
+      background-color: #1a1a1a;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+    }
+
+    header h1 {
+      color: #00e5ff;
+      margin: 0;
+      font-size: 1.8rem;
+    }
+
+    nav a {
+      color: #00e5ff;
+      margin-left: 1rem;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    nav a:hover {
+      text-decoration: underline;
+    }
+
+    .contenedor {
+      max-width: 1200px;
+      margin: auto;
+      padding: 2rem;
+    }
+
+    .contenedor h1 {
+      font-size: 2.5rem;
+      margin-bottom: 2rem;
+      color: #00e5ff;
+      text-align: center;
+    }
+
+    #listaServicios {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 2rem;
+    }
+
+    .servicio-box {
+      background: #1f1f1f;
+      padding: 1.5rem;
+      border-radius: 15px;
+      box-shadow: 0 0 15px rgba(0,255,255,0.1);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      position: relative;
+    }
+
+    .servicio-box:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 0 25px rgba(0,255,255,0.3);
+    }
+
+    .servicio-box h2 {
+      color: #4dd0e1;
+      margin-bottom: 1rem;
+    }
+
+    .servicio-box p {
+      margin: 0.5rem 0;
+      color: #cccccc;
+    }
+
+    .precio {
+      color: #00e676;
+      font-weight: bold;
+    }
+
+    .ver-mas {
+      margin-top: 1rem;
+      background: #00bcd4;
+      border: none;
+      padding: 0.5rem 1rem;
+      color: #000;
+      font-weight: bold;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    .ver-mas:hover {
+      background: #0097a7;
+    }
+
+    footer {
+      background: #121212;
+      color: #888;
+      padding: 2rem;
+      text-align: center;
+      margin-top: 4rem;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.85);
+      z-index: 999;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-content {
+      background: #1e1e1e;
+      padding: 2rem;
+      border-radius: 15px;
+      width: 90%;
+      max-width: 500px;
+      color: #fff;
+      position: relative;
+      animation: fadeIn 0.4s ease;
+    }
+
+    .cerrar {
+      position: absolute;
+      top: 10px;
+      right: 15px;
+      font-size: 26px;
+      color: #f44336;
+      cursor: pointer;
+    }
+
+    .cerrar:hover {
+      color: #ff7961;
+    }
+
+    .solicitar-btn {
+      margin-top: 1.5rem;
+      display: inline-block;
+      background-color: #00e676;
+      color: #000;
+      padding: 0.6rem 1.2rem;
+      border-radius: 10px;
+      font-weight: bold;
+      text-decoration: none;
+      transition: background 0.3s ease;
+    }
+
+    .solicitar-btn:hover {
+      background-color: #00c853;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    @media (max-width: 600px) {
+      .contenedor h1 {
+        font-size: 1.8rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Info.2B</h1>
+    <nav>
+      <a href="index.html">Inicio</a>
+      <a href="servicios.html">Servicios</a>
+      <a href="seguimiento.html">Seguimiento</a>
+      <a href="blog.html">Blog</a>
+      <a href="contacto.html">Contacto</a>
+    </nav>
+  </header>
+
+  <main class="contenedor">
+    <h1>Nuestros Servicios</h1>
+    <div id="listaServicios"></div>
+  </main>
+
+  <footer>
+    &copy; 2025 Info.2B - Soluciones hechas a tu medida
+  </footer>
+
+  <!-- Modal -->
+  <div id="modalServicio" class="modal">
+    <div class="modal-content">
+      <span class="cerrar">&times;</span>
+      <h2 id="modalTitulo"></h2>
+      <p id="modalDescripcion"></p>
+      <p style="color: #64ffda; font-weight:bold">💰 Precio estimado: <span id="modalPrecio"></span></p>
+      <a id="btnSolicitar" class="solicitar-btn" href="#">Solicitar este servicio</a>
+    </div>
+  </div>
+
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyBJoYFUAJLkaeXA4Lu6T_GujtIgs96Ka0I",
+    authDomain: "info2b-firebase.firebaseapp.com",
+    projectId: "info2b-firebase",
+    storageBucket: "info2b-firebase.appspot.com",
+    messagingSenderId: "660484913472",
+    appId: "1:660484913472:web:e6aee88dc824a0c3e362a5"
+  };
+
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.firestore();
+  const serviciosCache = {};
+
+  async function cargarServicios() {
+    try {
+      const snapshot = await db.collection("servicios").get();
+      const contenedor = document.getElementById("listaServicios");
+      contenedor.innerHTML = "";
+
+      snapshot.forEach(doc => {
+        const s = doc.data();
+        const id = doc.id;
+        serviciosCache[id] = s;
+
+        const div = document.createElement("div");
+        div.className = "servicio-box";
+        div.innerHTML = `
+          <h2>${s.titulo}</h2>
+          <p>${s.descripcion_corta}</p>
+          <p class="precio">💰 ${s.precio}</p>
+          <button class="ver-mas" data-id="${id}">Ver más</button>
+        `;
+        contenedor.appendChild(div);
+      });
+
+      initModales();
+    } catch (err) {
+      console.error("❌ Error al cargar servicios:", err);
+    }
+  }
+
+  function initModales() {
+    document.querySelectorAll(".ver-mas").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const id = btn.dataset.id;
+        const s = serviciosCache[id];
+        if (s) {
+          mostrarModal(s);
+        } else {
+          console.error("⚠ Servicio no encontrado:", id);
+        }
+      });
+    });
+  }
+
+  function mostrarModal(s) {
+    document.getElementById("modalTitulo").textContent = s.titulo;
+    document.getElementById("modalDescripcion").textContent = s.descripcion_detallada;
+    document.getElementById("modalPrecio").textContent = s.precio;
+
+    const btn = document.getElementById("btnSolicitar");
+    
+    // Guardar título y precio en sessionStorage
+    sessionStorage.setItem("servicio_titulo", s.titulo);
+    sessionStorage.setItem("servicio_precio", s.precio);
+
+    // Redirige a contacto
+    btn.href = "contacto.html";
+
+    document.getElementById("modalServicio").style.display = "flex";
+  }
+
+  document.querySelector(".cerrar").onclick = () =>
+    document.getElementById("modalServicio").style.display = "none";
+
+  window.onclick = e => {
+    if (e.target.id === "modalServicio") {
+      document.getElementById("modalServicio").style.display = "none";
+    }
+  };
+
+  document.addEventListener("DOMContentLoaded", cargarServicios);
+</script>
+</body>
+</html>

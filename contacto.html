@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Contacto - Info.2B</title>
+  <link rel="stylesheet" href="css/estilos.css" />
+  <style>
+    body {
+      background: #0e0e0e;
+      color: #f0f0f0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    header {
+      background: #151515;
+      padding: 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    nav a {
+      color: #64ffda;
+      margin-left: 1rem;
+      text-decoration: none;
+    }
+    nav a:hover {
+      text-decoration: underline;
+    }
+    main {
+      max-width: 1000px;
+      margin: auto;
+      padding: 2rem;
+    }
+    h1 {
+      text-align: center;
+      color: #00e5ff;
+      margin-bottom: 2rem;
+    }
+    form {
+      background: #1c1c1c;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 0 10px #00000088;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+    }
+    form .full {
+      grid-column: 1 / -1;
+    }
+    label {
+      font-weight: bold;
+      color: #80cbc4;
+    }
+    input, select, textarea {
+      width: 100%;
+      padding: 0.7rem;
+      border: none;
+      border-radius: 6px;
+      margin-top: 0.3rem;
+      background: #292929;
+      color: #fff;
+      font-size: 1rem;
+    }
+    button {
+      grid-column: 1 / -1;
+      padding: 0.8rem;
+      background: #00e676;
+      color: #000;
+      border: none;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #00c853;
+    }
+    .checkbox {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.9rem;
+      color: #ccc;
+    }
+    #mensaje-exito {
+      margin-top: 2rem;
+      background: #1b2a21;
+      color: #a5f2c4;
+      padding: 1.5rem;
+      border-left: 5px solid #00e676;
+      border-radius: 10px;
+      display: none;
+      font-size: 1.1rem;
+    }
+    .oculto {
+      display: none;
+    }
+    .servicio-seleccionado {
+      background: rgba(0, 229, 255, 0.1);
+      padding: 1rem;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+      border-left: 3px solid #00e5ff;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Info.2B</h1>
+    <nav>
+      <a href="index.html">Inicio</a>
+      <a href="servicios.html">Servicios</a>
+      <a href="seguimiento.html">Seguimiento</a>
+      <a href="blog.html">Blog</a>
+      <a href="contacto.html">Contacto</a>
+    </nav>
+  </header>
+
+  <main>
+    <h1>Formulario de Solicitud</h1>
+    
+    <!-- Mostrar el servicio seleccionado -->
+    <div id="servicioBanner" class="servicio-seleccionado" style="display: none;">
+      <strong>Servicio seleccionado:</strong>
+      <span id="servicioTitulo"></span>
+    </div>
+    
+    <form id="formularioContacto">
+      <div class="full">
+        <label for="nombre_completo">Nombre completo</label>
+        <input type="text" id="nombre_completo" name="nombre_completo" required />
+      </div>
+      <div>
+        <label for="dpi">DPI</label>
+        <input type="text" id="dpi" name="dpi" required placeholder="Ej. 1234 56789 0101" pattern="^\d{4}\s\d{5}\s\d{4}$" title="Debe ingresar el DPI con espacios. Ej: 1234 56789 0101" />
+      </div>
+      <div>
+        <label for="correo">Correo electrónico</label>
+        <input type="email" id="correo" name="correo" required />
+      </div>
+      <div>
+        <label for="telefono">Teléfono</label>
+        <input type="tel" id="telefono" name="telefono" required />
+      </div>
+      <div class="full">
+        <label for="servicio_solicitado">Servicio solicitado</label>
+        <input type="text" id="servicio_solicitado" name="servicio_solicitado" readonly style="background: #333;" />
+      </div>
+      <div>
+        <label for="tipo_equipo">Tipo de equipo</label>
+        <select id="tipo_equipo" name="tipo_equipo" required>
+          <option value="">-- Selecciona uno --</option>
+          <option>Redes</option>
+          <option>Laptop</option>
+          <option>PC</option>
+          <option>Tablet</option>
+          <option>Otros</option>
+        </select>
+      </div>
+      <div>
+        <label for="marca">Marca</label>
+        <input type="text" id="marca" name="marca" required />
+      </div>
+      <div>
+        <label for="modelo">Modelo</label>
+        <input type="text" id="modelo" name="modelo" required />
+      </div>
+      <div>
+        <label for="serie">N° de Serie</label>
+        <input type="text" id="serie" name="serie" required />
+      </div>
+      <div>
+        <label for="garantia">¿El equipo tiene garantía?</label>
+        <select id="garantia" name="garantia" required>
+          <option value="">-- Selecciona una opción --</option>
+          <option value="sí">Sí</option>
+          <option value="no">No</option>
+        </select>
+      </div>
+      <div id="campo_justificacion" class="full oculto">
+        <label for="razon_no_garantia">¿Por qué no lo ha enviado a garantía?</label>
+        <input type="text" id="razon_no_garantia" name="razon_no_garantia" placeholder="Especifica si aplica..." />
+      </div>
+      <div class="full">
+        <label for="problema">Descripción del problema</label>
+        <textarea id="problema" name="problema" rows="3" required></textarea>
+      </div>
+      <div>
+        <label for="prioridad">Prioridad del caso</label>
+        <select id="prioridad" name="prioridad">
+          <option>Normal</option>
+          <option>Urgente</option>
+          <option>Crítica</option>
+        </select>
+      </div>
+      <div>
+        <label for="fecha_preferida">Fecha preferida</label>
+        <input type="date" id="fecha_preferida" name="fecha_preferida" />
+      </div>
+      <div class="checkbox full">
+        <input type="checkbox" id="acepto_politicas" name="acepto_politicas" required />
+        <label for="acepto_politicas">
+          He leído y acepto las <a href="politicas.html" target="_blank" style="color:#00e5ff;">políticas de privacidad</a>
+          y los <a href="terminos.html" target="_blank" style="color:#00e5ff;">términos y condiciones</a>.
+        </label>
+      </div>
+      <button type="submit">Enviar solicitud</button>
+    </form>
+    <div id="mensaje-exito"></div>
+  </main>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js";
+    import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBJoYFUAJLkaeXA4Lu6T_GujtIgs96Ka0I",
+      authDomain: "info2b-firebase.firebaseapp.com",
+      projectId: "info2b-firebase",
+      storageBucket: "info2b-firebase.appspot.com",
+      messagingSenderId: "660484913472",
+      appId: "1:660484913472:web:e6aee88dc824a0c3e362a5"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const form = document.getElementById("formularioContacto");
+    const mensajeExito = document.getElementById("mensaje-exito");
+    const campoJustificacion = document.getElementById("campo_justificacion");
+    const servicioBanner = document.getElementById("servicioBanner");
+    const servicioTitulo = document.getElementById("servicioTitulo");
+    const servicioInput = document.getElementById("servicio_solicitado");
+
+	// Mostrar servicio seleccionado desde sessionStorage
+	const titulo = sessionStorage.getItem("servicio_titulo");
+	const precio = sessionStorage.getItem("servicio_precio");
+
+	if (titulo && precio) {
+	  const textoServicio = ${titulo} - Q${precio};
+	  servicioTitulo.textContent = textoServicio;
+	  servicioInput.value = textoServicio;
+	  servicioBanner.style.display = "block";
+	}
+
+    document.getElementById("garantia").addEventListener("change", (e) => {
+      campoJustificacion.classList.toggle("oculto", e.target.value !== "no");
+    });
+
+    function generarCodigoSeguimiento() {
+      const letras = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+      let codigo = "";
+      for (let i = 0; i < 7; i++) {
+        codigo += letras.charAt(Math.floor(Math.random() * letras.length));
+      }
+      return codigo;
+    }
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const data = {
+        nombre_completo: form.nombre_completo.value.trim(),
+        dpi: form.dpi.value.trim(),
+        correo: form.correo.value.trim(),
+        telefono: form.telefono.value.trim(),
+        tipo_equipo: form.tipo_equipo.value,
+        marca: form.marca.value.trim(),
+        modelo: form.modelo.value.trim(),
+        serie: form.serie.value.trim(),
+        garantia: form.garantia.value,
+        razon_no_garantia: form.razon_no_garantia?.value || "",
+        problema: form.problema.value.trim(),
+        prioridad: form.prioridad.value,
+        fecha_preferida: form.fecha_preferida.value,
+        servicio_solicitado: form.servicio_solicitado.value.trim(),
+        acepto_politicas: form.acepto_politicas.checked,
+        estado: "Pendiente",
+        fecha_ingreso: serverTimestamp(),
+        codigo_seguimiento: generarCodigoSeguimiento()
+      };
+
+      try {
+        await addDoc(collection(db, "trabajos"), data);
+
+        const nombre = data.nombre_completo.split(" ")[0];
+        mensajeExito.innerHTML = `
+          <strong>¡Gracias, ${nombre}!</strong> Tu solicitud fue enviada correctamente.<br><br>
+          ✅ Código de seguimiento:
+          <code id="codigoCopiar" style="background:#222;padding:5px;border-radius:5px;">${data.codigo_seguimiento}</code>
+          <button id="btnCopiar" style="margin-left:10px;padding:3px 8px;font-size:0.9rem;cursor:pointer;">📋 Copiar</button>
+          <br><br>
+          Pronto nos pondremos en contacto contigo. 😊
+        `;
+        mensajeExito.style.display = "block";
+        form.reset();
+        campoJustificacion.classList.add("oculto");
+        
+        // Mantener el servicio seleccionado después del envío
+        if (servicioParam) {
+          servicioInput.value = decodeURIComponent(servicioParam);
+        }
+        
+        form.scrollIntoView({ behavior: "smooth" });
+
+        const btnCopiar = document.getElementById("btnCopiar");
+        const codigoSpan = document.getElementById("codigoCopiar");
+
+        btnCopiar.addEventListener("click", () => {
+          navigator.clipboard.writeText(codigoSpan.textContent)
+            .then(() => {
+              btnCopiar.textContent = "✅ Copiado";
+              setTimeout(() => {
+                btnCopiar.textContent = "📋 Copiar";
+              }, 2000);
+            })
+            .catch(() => {
+              btnCopiar.textContent = "❌ Error";
+            });
+        });
+
+      } catch (error) {
+        mensajeExito.innerHTML = `<span style="color:#ff5252;">❌ Error al enviar: ${error.message}</span>`;
+        mensajeExito.style.display = "block";
+      }
+    });
+  </script>
+</body>
+</html>

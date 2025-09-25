@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Info.2B - Soporte Técnico Informático</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap">
+  <style>
+    :root {
+      --primary: #00f7ff;
+      --secondary: #7b2cbf;
+      --dark: #0a0a1a;
+      --darker: #050510;
+      --light: #e0e0ff;
+      --accent: #ff2d75;
+      --glass: rgba(255, 255, 255, 0.05);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: radial-gradient(ellipse at bottom, var(--darker) 0%, var(--dark) 100%);
+      color: var(--light);
+      font-family: 'Space Grotesk', sans-serif;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* Efecto de partículas de fondo */
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: 
+        radial-gradient(circle at 20% 30%, rgba(0, 247, 255, 0.1) 0%, transparent 20%),
+        radial-gradient(circle at 80% 70%, rgba(123, 44, 191, 0.1) 0%, transparent 20%);
+      z-index: -1;
+      pointer-events: none;
+    }
+
+    /* Animación de cursor personalizado */
+    .custom-cursor {
+      position: fixed;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: rgba(0, 247, 255, 0.5);
+      pointer-events: none;
+      mix-blend-mode: screen;
+      z-index: 9999;
+      transform: translate(-50%, -50%);
+      transition: transform 0.1s ease;
+    }
+
+    .cursor-follower {
+      position: fixed;
+      width: 40px;
+      height: 40px;
+      border: 1px solid rgba(0, 247, 255, 0.3);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9998;
+      transform: translate(-50%, -50%);
+      transition: transform 0.3s ease, width 0.3s ease, height 0.3s ease;
+    }
+
+    header {
+      background: var(--glass);
+      backdrop-filter: blur(10px);
+      padding: 1.5rem 3rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      border-bottom: 1px solid rgba(0, 247, 255, 0.1);
+    }
+
+    .logo-container {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .logo-container img {
+      height: 50px;
+      transition: transform 0.3s ease;
+    }
+
+    .logo-container:hover img {
+      transform: rotate(15deg);
+    }
+
+    header h1 {
+      background: linear-gradient(90deg, var(--primary), #00c8ff);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      font-size: 1.8rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    nav {
+      display: flex;
+      gap: 2rem;
+    }
+
+    nav a {
+      position: relative;
+      text-decoration: none;
+      color: var(--light);
+      font-weight: 500;
+      padding: 0.5rem 0;
+      transition: color 0.3s;
+    }
+
+    nav a::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: var(--primary);
+      transition: width 0.3s ease;
+    }
+
+    nav a:hover {
+      color: var(--primary);
+    }
+
+    nav a:hover::after {
+      width: 100%;
+    }
+
+    .hero {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      text-align: center;
+      padding: 2rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: 
+        radial-gradient(circle at center, rgba(0, 247, 255, 0.05) 0%, transparent 70%);
+      animation: rotate 30s linear infinite;
+      z-index: -1;
+    }
+
+    .hero-content {
+      max-width: 800px;
+      position: relative;
+    }
+
+    .hero h1 {
+      font-size: 4rem;
+      font-weight: 700;
+      background: linear-gradient(90deg, var(--primary), #00c8ff);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      margin-bottom: 1.5rem;
+      line-height: 1.2;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+
+    .hero p {
+      font-size: 1.4rem;
+      color: rgba(224, 224, 255, 0.8);
+      margin-bottom: 3rem;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .cta-button {
+      display: inline-block;
+      background: linear-gradient(90deg, var(--primary), #00c8ff);
+      color: var(--dark);
+      padding: 1rem 2.5rem;
+      border-radius: 50px;
+      font-weight: 600;
+      text-decoration: none;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.4s ease;
+      box-shadow: 0 10px 20px rgba(0, 247, 255, 0.3);
+    }
+
+    .cta-button:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 15px 30px rgba(0, 247, 255, 0.4);
+    }
+
+    .cta-button::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      transition: 0.5s;
+    }
+
+    .cta-button:hover::before {
+      left: 100%;
+    }
+
+    .floating-shapes {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    .shape {
+      position: absolute;
+      opacity: 0.1;
+      border-radius: 50%;
+      filter: blur(40px);
+    }
+
+    .shape-1 {
+      width: 300px;
+      height: 300px;
+      background: var(--primary);
+      top: 10%;
+      left: 10%;
+      animation: float 15s ease-in-out infinite;
+    }
+
+    .shape-2 {
+      width: 200px;
+      height: 200px;
+      background: var(--secondary);
+      top: 60%;
+      left: 70%;
+      animation: float 12s ease-in-out infinite reverse;
+    }
+
+    .shape-3 {
+      width: 150px;
+      height: 150px;
+      background: var(--accent);
+      top: 30%;
+      left: 80%;
+      animation: float 10s ease-in-out infinite 2s;
+    }
+
+    .servicios {
+      padding: 6rem 2rem;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .servicio {
+      background: var(--glass);
+      backdrop-filter: blur(10px);
+      padding: 2.5rem;
+      border-radius: 20px;
+      text-align: center;
+      transition: all 0.4s ease;
+      border: 1px solid rgba(0, 247, 255, 0.1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .servicio::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, rgba(0, 247, 255, 0.05) 0%, transparent 100%);
+      z-index: -1;
+    }
+
+    .servicio:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 20px 40px rgba(0, 247, 255, 0.1);
+      border-color: rgba(0, 247, 255, 0.3);
+    }
+
+    .servicio h3 {
+      font-size: 1.5rem;
+      margin-bottom: 1.5rem;
+      color: var(--primary);
+      position: relative;
+      display: inline-block;
+    }
+
+    .servicio h3::after {
+      content: '';
+      position: absolute;
+      bottom: -8px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 50px;
+      height: 2px;
+      background: var(--primary);
+    }
+
+    .servicio p {
+      color: rgba(224, 224, 255, 0.7);
+      margin-bottom: 2rem;
+      font-size: 1rem;
+    }
+
+    .boton {
+      display: inline-block;
+      background: rgba(0, 247, 255, 0.1);
+      color: var(--primary);
+      padding: 0.8rem 1.8rem;
+      border-radius: 50px;
+      font-weight: 500;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      border: 1px solid rgba(0, 247, 255, 0.3);
+      margin: 0.5rem;
+    }
+
+    .boton:hover {
+      background: rgba(0, 247, 255, 0.2);
+      transform: translateY(-2px);
+    }
+
+    .estilo-cian {
+      border-top: 3px solid var(--primary);
+    }
+
+    .estilo-purpura {
+      border-top: 3px solid var(--secondary);
+    }
+
+    .estilo-purpura h3 {
+      color: var(--secondary);
+    }
+
+    .estilo-purpura .boton {
+      background: rgba(123, 44, 191, 0.1);
+      color: var(--secondary);
+      border-color: rgba(123, 44, 191, 0.3);
+    }
+
+    .estilo-purpura .boton:hover {
+      background: rgba(123, 44, 191, 0.2);
+    }
+
+    .estilo-claro {
+      border-top: 3px solid var(--accent);
+    }
+
+    .estilo-claro h3 {
+      color: var(--accent);
+    }
+
+    .estilo-claro .boton {
+      background: rgba(255, 45, 117, 0.1);
+      color: var(--accent);
+      border-color: rgba(255, 45, 117, 0.3);
+    }
+
+    .estilo-claro .boton:hover {
+      background: rgba(255, 45, 117, 0.2);
+    }
+
+    footer {
+      background: rgba(5, 5, 16, 0.8);
+      text-align: center;
+      padding: 2rem;
+      font-size: 0.9rem;
+      color: rgba(224, 224, 255, 0.5);
+      border-top: 1px solid rgba(0, 247, 255, 0.1);
+      backdrop-filter: blur(5px);
+    }
+
+    footer p {
+      margin-bottom: 0.5rem;
+    }
+
+    .social-links {
+      display: flex;
+      justify-content: center;
+      gap: 1.5rem;
+      margin-top: 1.5rem;
+    }
+
+    .social-links a {
+      color: rgba(224, 224, 255, 0.5);
+      font-size: 1.2rem;
+      transition: color 0.3s ease;
+    }
+
+    .social-links a:hover {
+      color: var(--primary);
+    }
+
+    @keyframes float {
+      0%, 100% {
+        transform: translateY(0) translateX(0);
+      }
+      50% {
+        transform: translateY(-20px) translateX(10px);
+      }
+    }
+
+    @keyframes rotate {
+      from {
+        transform: rotate(0deg);
+      }
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    @keyframes pulse {
+      0% {
+        box-shadow: 0 0 0 0 rgba(0, 247, 255, 0.4);
+      }
+      70% {
+        box-shadow: 0 0 0 15px rgba(0, 247, 255, 0);
+      }
+      100% {
+        box-shadow: 0 0 0 0 rgba(0, 247, 255, 0);
+      }
+    }
+
+    @media (max-width: 768px) {
+      header {
+        flex-direction: column;
+        padding: 1rem;
+      }
+
+      nav {
+        margin-top: 1rem;
+        gap: 1rem;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+
+      .hero h1 {
+        font-size: 2.5rem;
+      }
+
+      .hero p {
+        font-size: 1.1rem;
+      }
+
+      .servicios {
+        grid-template-columns: 1fr;
+        padding: 3rem 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="custom-cursor"></div>
+  <div class="cursor-follower"></div>
+
+  <header>
+    <div class="logo-container">
+      <img src="img/info2b-logo.png" alt="Logo Info.2B">
+      <h1>Info.2B</h1>
+    </div>
+    <nav>
+      <a href="index.html">Inicio</a>
+      <a href="servicios.html">Servicios</a>
+      <a href="seguimiento.html">Seguimiento</a>
+      <a href="blog.html">Blog</a>
+      <a href="contacto.html">Contacto</a>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <div class="floating-shapes">
+      <div class="shape shape-1"></div>
+      <div class="shape shape-2"></div>
+      <div class="shape shape-3"></div>
+    </div>
+    <div class="hero-content">
+      <h1>Conectamos tecnología con soluciones</h1>
+      <p>Reparamos, acompañamos y potenciamos tu mundo digital con servicios técnicos de última generación.</p>
+      <a href="servicios.html" class="cta-button">¿En qué te podemos ayudar?</a>
+    </div>
+  </section>
+
+  <section class="servicios">
+    <div class="servicio estilo-cian">
+      <h3>🛠 Soporte Técnico</h3>
+      <p>¿Tuviste un problema con tu equipo? Nuestros expertos están listos para diagnosticar y solucionar cualquier falla técnica.</p>
+      <a href="contacto.html" class="boton">Solicitar Soporte</a>
+      <a href="recuperar.html" class="boton">📦 Recuperar código</a>
+    </div>
+    
+    <div class="servicio estilo-purpura">
+      <h3>👤 Acceso de Usuario</h3>
+      <p>Inicia sesión para acceder a tu panel personalizado, ver el historial de servicios y gestionar tus dispositivos.</p>
+      <a href="login.html" class="boton">🔐 Iniciar sesión</a>
+    </div>
+    
+    <div class="servicio estilo-claro">
+      <h3>📋 Cotizaciones Inteligentes</h3>
+      <p>Solicita un análisis personalizado y recibe un presupuesto adaptado a tus necesidades y posibilidades.</p>
+      <a href="cotizaciones.html" class="boton">✉️ Solicitar cotización</a>
+    </div>
+  </section>
+
+  <footer>
+    <p>&copy; 2025 Info.2B - Soporte Técnico Integral</p>
+    <p>Tecnología que entiende tus necesidades</p>
+    <div class="social-links">
+      <a href="#" aria-label="Facebook">📱</a>
+      <a href="#" aria-label="Instagram">📸</a>
+      <a href="#" aria-label="Twitter">🐦</a>
+      <a href="#" aria-label="LinkedIn">💼</a>
+    </div>
+  </footer>
+
+  <script>
+    // Efecto de cursor personalizado
+    const cursor = document.querySelector('.custom-cursor');
+    const follower = document.querySelector('.cursor-follower');
+    
+    document.addEventListener('mousemove', (e) => {
+      cursor.style.left = e.clientX + 'px';
+      cursor.style.top = e.clientY + 'px';
+      
+      setTimeout(() => {
+        follower.style.left = e.clientX + 'px';
+        follower.style.top = e.clientY + 'px';
+      }, 100);
+    });
+    
+    // Efecto hover en enlaces
+    document.querySelectorAll('a, button').forEach(el => {
+      el.addEventListener('mouseenter', () => {
+        cursor.style.transform = 'translate(-50%, -50%) scale(1.5)';
+        follower.style.width = '30px';
+        follower.style.height = '30px';
+        follower.style.borderColor = 'rgba(0, 247, 255, 0.5)';
+      });
+      
+      el.addEventListener('mouseleave', () => {
+        cursor.style.transform = 'translate(-50%, -50%) scale(1)';
+        follower.style.width = '40px';
+        follower.style.height = '40px';
+        follower.style.borderColor = 'rgba(0, 247, 255, 0.3)';
+      });
+    });
+    
+    // Animación de carga suave
+    window.addEventListener('load', () => {
+      document.body.style.opacity = '1';
+    });
+    
+    document.body.style.opacity = '0';
+    document.body.style.transition = 'opacity 0.5s ease';
+  </script>
+</body>
+</html>

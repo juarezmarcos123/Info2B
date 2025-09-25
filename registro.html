@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Registro - Info.2B</title>
+  <link rel="stylesheet" href="css/estilos.css">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to right, #0f111a, #10182a);
+      color: #f0f0f0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+    }
+
+    .registro-container {
+      background: #1e2438;
+      padding: 2rem;
+      border-radius: 12px;
+      width: 100%;
+      max-width: 500px;
+      min-height: 670px;
+      box-shadow: 0 0 20px rgba(0, 255, 200, 0.2);
+      animation: aparecer 0.6s ease;
+    }
+
+    h2 {
+      text-align: center;
+      color: #00ffe7;
+      margin-bottom: 1.5rem;
+    }
+
+    label {
+      display: block;
+      margin-top: 1rem;
+      font-weight: bold;
+      color: #ccc;
+    }
+
+    input {
+      width: 100%;
+      padding: 0.7rem;
+      border: none;
+      border-radius: 6px;
+      background: #2a314c;
+      color: white;
+      margin-top: 0.5rem;
+    }
+
+    button {
+      margin-top: 2rem;
+      width: 100%;
+      padding: 0.9rem;
+      background: #00ffc3;
+      color: #000;
+      border: none;
+      border-radius: 6px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #00ddb2;
+    }
+
+    .mensaje {
+      margin-top: 1rem;
+      text-align: center;
+      color: #ff6b6b;
+    }
+
+    @keyframes aparecer {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+  <div class="registro-container">
+    <h2>Crear Cuenta</h2>
+    <form id="formRegistro">
+      <label for="nombre">Nombre completo</label>
+      <input type="text" id="nombre" required>
+
+      <label for="fechaNacimiento">Fecha de nacimiento</label>
+      <input type="date" id="fechaNacimiento" name="fechaNacimiento" required>
+
+      <label for="dpi">DPI</label>
+      <input type="text" id="dpi" required pattern="\d{4}\s\d{5}\s\d{4}" placeholder="Ej: 1234 56789 0101">
+
+      <label for="correo">Correo electrónico</label>
+      <input type="email" id="correo" required>
+
+      <label for="telefono">Teléfono</label>
+      <input type="tel" id="telefono" required>
+
+      <label for="direccion">Dirección</label>
+      <input type="text" id="direccion" required>
+
+      <label for="contrasena">Contraseña</label>
+      <input type="password" id="contrasena" required>
+
+      <label for="confirmar">Confirmar contraseña</label>
+      <input type="password" id="confirmar" required>
+
+      <button type="submit" id="btnRegistro">Registrarse</button>
+      <div class="mensaje" id="mensaje"></div>
+    </form>
+  </div>
+
+<script type="module">
+  import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js';
+  import { getAuth, createUserWithEmailAndPassword } from 'https://www.gstatic.com/firebasejs/11.9.1/firebase-auth.js';
+  import { getFirestore, doc, setDoc } from 'https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore.js';
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyBJoYFUAJLkaeXA4Lu6T_GujtIgs96Ka0I",
+    authDomain: "info2b-firebase.firebaseapp.com",
+    projectId: "info2b-firebase",
+    storageBucket: "info2b-firebase.appspot.com",
+    messagingSenderId: "660484913472",
+    appId: "1:660484913472:web:e6aee88dc824a0c3e362a5"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+
+  const form = document.getElementById("formRegistro");
+  const mensaje = document.getElementById("mensaje");
+  const boton = document.getElementById("btnRegistro");
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const nombre = document.getElementById("nombre").value.trim();
+    const dpi = document.getElementById("dpi").value.trim();
+    const correo = document.getElementById("correo").value.trim();
+    const telefono = document.getElementById("telefono").value.trim();
+    const direccion = document.getElementById("direccion").value.trim();
+    const contrasena = document.getElementById("contrasena").value;
+    const confirmar = document.getElementById("confirmar").value;
+    const fechaNacimiento = document.getElementById("fechaNacimiento").value;
+
+    mensaje.textContent = "";
+    mensaje.style.color = "#ff6b6b";
+
+    if (contrasena !== confirmar) {
+      mensaje.textContent = "❌ Las contraseñas no coinciden.";
+      mensaje.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    }
+
+    if (contrasena.length < 6) {
+      mensaje.textContent = "❌ La contraseña debe tener al menos 6 caracteres.";
+      mensaje.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    }
+
+    try {
+      boton.disabled = true;
+      boton.textContent = "Registrando...";
+
+      const credencial = await createUserWithEmailAndPassword(auth, correo, contrasena);
+      const uid = credencial.user.uid;
+
+      await setDoc(doc(db, "usuarios", uid), {
+        nombre,
+        dpi,
+        correo,
+        telefono,
+        direccion,
+        fechaNacimiento,
+        fecha_registro: new Date()
+      });
+
+      mensaje.textContent = "";
+
+      if (typeof Swal !== 'undefined') {
+        Swal.fire({
+          title: '¡Registro exitoso!',
+          text: 'Ahora puedes iniciar sesión con tus credenciales.',
+          icon: 'success',
+          confirmButtonText: 'Iniciar sesión'
+        }).then(() => {
+          window.location.href = 'login.html';
+        });
+      } else {
+        alert("✅ Registro exitoso");
+        location.href = 'login.html';
+      }
+
+    } catch (error) {
+      boton.disabled = false;
+      boton.textContent = "Registrarse";
+
+      if (error.code === 'auth/email-already-in-use') {
+        mensaje.textContent = '❌ Este correo ya está registrado. Intenta iniciar sesión o usa otro.';
+      } else if (error.code === 'auth/invalid-email') {
+        mensaje.textContent = '❌ El correo ingresado no es válido.';
+      } else if (error.code === 'auth/weak-password') {
+        mensaje.textContent = '❌ La contraseña es muy débil. Usa al menos 6 caracteres.';
+      } else {
+        mensaje.textContent = `❌ Error: ${error.message}`;
+      }
+
+      mensaje.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  });
+</script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</body>
+</html>

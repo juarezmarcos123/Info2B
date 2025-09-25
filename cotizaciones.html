@@ -1,0 +1,140 @@
+<!-- Página de Cotizaciones - cotizaciones.html -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Solicitar Cotización - Info.2B</title>
+  <link rel="stylesheet" href="css/estilos.css">
+  <style>
+    body {
+      background: #0d1117;
+      color: #f0f0f0;
+      font-family: 'Segoe UI', sans-serif;
+      padding: 2rem;
+    }
+    h1 {
+      text-align: center;
+      color: #00e5ff;
+      margin-bottom: 2rem;
+    }
+    form {
+      max-width: 700px;
+      margin: auto;
+      background: #1a1a1a;
+      padding: 2rem;
+      border-radius: 10px;
+      box-shadow: 0 0 10px #00000055;
+    }
+    label, input, select, textarea, button {
+      width: 100%;
+      margin-bottom: 1rem;
+    }
+    input, select, textarea {
+      padding: 0.8rem;
+      background: #292929;
+      color: white;
+      border: none;
+      border-radius: 5px;
+    }
+    button {
+      padding: 0.9rem;
+      background: #00e676;
+      color: black;
+      font-weight: bold;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #00c853;
+    }
+    #mensaje-exito {
+      text-align: center;
+      margin-top: 2rem;
+      background: #1b2a21;
+      padding: 1rem;
+      border-left: 4px solid #00e676;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <h1>Solicitar Cotización</h1>
+  <form id="formCotizacion">
+    <label for="nombre">Nombre completo</label>
+    <input type="text" id="nombre" name="nombre" required>
+
+    <label for="correo">Correo electrónico</label>
+    <input type="email" id="correo" name="correo" required>
+
+    <label for="telefono">Teléfono</label>
+    <input type="tel" id="telefono" name="telefono" required>
+
+    <label for="tipo">Tipo de solicitud</label>
+    <select id="tipo" name="tipo" required>
+      <option value="">-- Selecciona una opción --</option>
+      <option value="Reparación">Reparación</option>
+      <option value="Actualización">Actualización</option>
+      <option value="Mantenimiento">Mantenimiento</option>
+      <option value="Compra de partes">Compra de partes</option>
+      <option value="Otro">Otro</option>
+    </select>
+
+    <label for="descripcion">Descripción del problema o necesidad</label>
+    <textarea id="descripcion" name="descripcion" rows="4" required></textarea>
+
+    <label for="presupuesto">Presupuesto estimado (opcional)</label>
+    <input type="text" id="presupuesto" name="presupuesto">
+
+    <button type="submit">Enviar solicitud</button>
+  </form>
+
+  <div id="mensaje-exito"></div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js";
+    import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBJoYFUAJLkaeXA4Lu6T_GujtIgs96Ka0I",
+      authDomain: "info2b-firebase.firebaseapp.com",
+      projectId: "info2b-firebase",
+      storageBucket: "info2b-firebase.appspot.com",
+      messagingSenderId: "660484913472",
+      appId: "1:660484913472:web:e6aee88dc824a0c3e362a5"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const form = document.getElementById("formCotizacion");
+    const mensajeExito = document.getElementById("mensaje-exito");
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const datos = {
+        nombre: form.nombre.value.trim(),
+        correo: form.correo.value.trim(),
+        telefono: form.telefono.value.trim(),
+        tipo: form.tipo.value,
+        descripcion: form.descripcion.value.trim(),
+        presupuesto: form.presupuesto.value.trim() || "No indicado",
+        fecha_envio: serverTimestamp()
+      };
+
+      try {
+        await addDoc(collection(db, "cotizaciones"), datos);
+        mensajeExito.innerHTML = `✅ Tu solicitud fue enviada correctamente. Te contactaremos pronto.`;
+        mensajeExito.style.display = "block";
+        form.reset();
+        form.scrollIntoView({ behavior: "smooth" });
+      } catch (error) {
+        mensajeExito.innerHTML = `❌ Error al enviar solicitud: ${error.message}`;
+        mensajeExito.style.display = "block";
+      }
+    });
+  </script>
+</body>
+</html>
