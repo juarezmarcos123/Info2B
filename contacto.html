@@ -87,6 +87,17 @@
       margin-bottom: 1rem;
       border-left: 3px solid #00e5ff;
     }
+    .campo-especifico {
+      grid-column: 1 / -1;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      padding: 1rem;
+      background: rgba(0, 229, 255, 0.05);
+      border-radius: 8px;
+      margin-top: 1rem;
+    }
+    .campo-especifico .full { grid-column: 1 / -1; }
   </style>
 </head>
 <body>
@@ -111,6 +122,7 @@
     </div>
     
     <form id="formularioContacto">
+      <!-- Campos comunes -->
       <div class="full">
         <label for="nombre_completo">Nombre completo</label>
         <input type="text" id="nombre_completo" name="nombre_completo" required />
@@ -134,45 +146,108 @@
         <input type="text" id="servicio_solicitado" name="servicio_solicitado" readonly style="background: #333;" />
       </div>
 
-      <!-- Campos dependientes solo si se trata de reparación o equipo -->
-      <div id="camposEquipo" class="oculto">
+      <!-- ======== Campos para Reparación ======== -->
+      <div id="campos-reparacion" class="campo-especifico oculto">
         <div>
-          <label for="tipo_equipo">Tipo de equipo</label>
-          <select id="tipo_equipo" name="tipo_equipo">
-            <option value="">-- Selecciona uno --</option>
-            <option>Redes</option>
-            <option>Laptop</option>
-            <option>PC</option>
-            <option>Tablet</option>
-            <option>Otros</option>
+          <label for="garantia">¿Tiene garantía?</label>
+          <select id="garantia" name="garantia">
+            <option value="Si">Sí</option>
+            <option value="No">No</option>
           </select>
         </div>
-        <div>
-          <label for="marca">Marca</label>
-          <input type="text" id="marca" name="marca" />
+        
+        <div id="motivoNoGarantia" class="full oculto">
+          <label for="razon_no_garantia">Motivo por el cual no tiene garantía:</label>
+          <textarea id="razon_no_garantia" name="razon_no_garantia" placeholder="Especifica el motivo..."></textarea>
         </div>
+        
         <div>
-          <label for="modelo">Modelo</label>
+          <label for="modelo">Modelo del equipo:</label>
           <input type="text" id="modelo" name="modelo" />
         </div>
-        <div>
-          <label for="serie">N° de Serie</label>
-          <input type="text" id="serie" name="serie" />
-        </div>
-        <div>
-          <label for="garantia">¿El equipo tiene garantía?</label>
-          <select id="garantia" name="garantia">
-            <option value="">-- Selecciona una opción --</option>
-            <option value="sí">Sí</option>
-            <option value="no">No</option>
-          </select>
-        </div>
-        <div id="campo_justificacion" class="full oculto">
-          <label for="razon_no_garantia">¿Por qué no lo ha enviado a garantía?</label>
-          <input type="text" id="razon_no_garantia" name="razon_no_garantia" placeholder="Especifica si aplica..." />
+        
+        <div class="full">
+          <label for="falla">Tipo de falla:</label>
+          <textarea id="falla" name="falla"></textarea>
         </div>
       </div>
 
+      <!-- ======== Campos para Mantenimiento ======== -->
+      <div id="campos-mantenimiento" class="campo-especifico oculto">
+        <div>
+          <label for="tipo_equipo">Tipo de equipo:</label>
+          <input type="text" id="tipo_equipo" name="tipo_equipo" />
+        </div>
+        
+        <div>
+          <label for="frecuencia">Frecuencia de mantenimiento:</label>
+          <select id="frecuencia" name="frecuencia">
+            <option value="Unico">Único</option>
+            <option value="Mensual">Mensual</option>
+            <option value="Trimestral">Trimestral</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- ======== Campos para Formateo ======== -->
+      <div id="campos-formateo" class="campo-especifico oculto">
+        <div>
+          <label for="sistema">Sistema operativo:</label>
+          <input type="text" id="sistema" name="sistema" />
+        </div>
+        
+        <div>
+          <label for="respaldo">¿Requiere respaldo de archivos?</label>
+          <select id="respaldo" name="respaldo">
+            <option value="Si">Sí</option>
+            <option value="No">No</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- ======== Campos para Cámaras ======== -->
+      <div id="campos-camaras" class="campo-especifico oculto">
+        <div>
+          <label for="tipoInstalacion">Tipo de instalación:</label>
+          <select id="tipoInstalacion" name="tipoInstalacion">
+            <option value="Hogar">Hogar</option>
+            <option value="Empresa">Empresa</option>
+          </select>
+        </div>
+        
+        <div>
+          <label for="ubicacionCamara">Ubicación:</label>
+          <input type="text" id="ubicacionCamara" name="ubicacionCamara" />
+        </div>
+        
+        <div>
+          <label for="numeroCamaras">Número de cámaras (opcional):</label>
+          <input type="number" id="numeroCamaras" name="numeroCamaras" min="1" />
+        </div>
+      </div>
+
+      <!-- ======== Campos para Redes ======== -->
+      <div id="campos-redes" class="campo-especifico oculto">
+        <div>
+          <label for="tipoRed">Tipo de red:</label>
+          <select id="tipoRed" name="tipoRed">
+            <option value="Hogar">Hogar</option>
+            <option value="Empresa">Empresa</option>
+          </select>
+        </div>
+        
+        <div>
+          <label for="alcance">Alcance requerido:</label>
+          <input type="text" id="alcance" name="alcance" />
+        </div>
+        
+        <div>
+          <label for="ubicacionRed">Ubicación:</label>
+          <input type="text" id="ubicacionRed" name="ubicacionRed" />
+        </div>
+      </div>
+
+      <!-- Campos comunes adicionales -->
       <div class="full">
         <label for="problema">Descripción del problema / detalles del servicio</label>
         <textarea id="problema" name="problema" rows="3" required></textarea>
@@ -221,11 +296,9 @@
 
     const form = document.getElementById("formularioContacto");
     const mensajeExito = document.getElementById("mensaje-exito");
-    const campoJustificacion = document.getElementById("campo_justificacion");
     const servicioBanner = document.getElementById("servicioBanner");
     const servicioTitulo = document.getElementById("servicioTitulo");
     const servicioInput = document.getElementById("servicio_solicitado");
-    const camposEquipo = document.getElementById("camposEquipo");
 
     // Mostrar servicio seleccionado desde sessionStorage
     const titulo = sessionStorage.getItem("servicio_titulo");
@@ -237,15 +310,52 @@
       servicioInput.value = textoServicio;
       servicioBanner.classList.remove("oculto");
 
-      // Mostrar campos de equipo solo si el servicio es de tipo reparación/equipo
-      const serviciosConEquipo = ["Reparación", "Mantenimiento de PC", "Redes", "Soporte Técnico"];
-      if (serviciosConEquipo.includes(titulo)) {
-        camposEquipo.classList.remove("oculto");
+      // Mostrar campos específicos según el servicio
+      mostrarCamposEspecificos(titulo);
+    }
+
+    // Función para mostrar campos específicos según el servicio
+    function mostrarCamposEspecificos(servicio) {
+      // Ocultar todos los campos específicos primero
+      document.querySelectorAll(".campo-especifico").forEach(div => {
+        div.classList.add("oculto");
+      });
+
+      // Mostrar campos según el servicio
+      switch(servicio.toLowerCase()) {
+        case "reparación de computadoras":
+        case "reparacion":
+          document.getElementById("campos-reparacion").classList.remove("oculto");
+          break;
+
+        case "mantenimiento":
+          document.getElementById("campos-mantenimiento").classList.remove("oculto");
+          break;
+
+        case "formateo":
+          document.getElementById("campos-formateo").classList.remove("oculto");
+          break;
+
+        case "cámaras":
+        case "camaras":
+          document.getElementById("campos-camaras").classList.remove("oculto");
+          break;
+
+        case "redes":
+          document.getElementById("campos-redes").classList.remove("oculto");
+          break;
       }
     }
 
-    document.getElementById("garantia").addEventListener("change", (e) => {
-      campoJustificacion.classList.toggle("oculto", e.target.value !== "no");
+    // Mostrar campo motivo si NO tiene garantía (para reparación)
+    document.addEventListener("DOMContentLoaded", () => {
+      const garantiaSelect = document.getElementById("garantia");
+      if (garantiaSelect) {
+        garantiaSelect.addEventListener("change", (e) => {
+          const motivoDiv = document.getElementById("motivoNoGarantia");
+          motivoDiv.classList.toggle("oculto", e.target.value !== "No");
+        });
+      }
     });
 
     function generarCodigoSeguimiento() {
@@ -265,12 +375,6 @@
         dpi: form.dpi.value.trim(),
         correo: form.correo.value.trim(),
         telefono: form.telefono.value.trim(),
-        tipo_equipo: form.tipo_equipo?.value || "",
-        marca: form.marca?.value || "",
-        modelo: form.modelo?.value || "",
-        serie: form.serie?.value || "",
-        garantia: form.garantia?.value || "",
-        razon_no_garantia: form.razon_no_garantia?.value || "",
         problema: form.problema.value.trim(),
         prioridad: form.prioridad.value,
         fecha_preferida: form.fecha_preferida.value,
@@ -280,6 +384,41 @@
         fecha_ingreso: serverTimestamp(),
         codigo_seguimiento: generarCodigoSeguimiento()
       };
+
+      // Agregar campos específicos según el servicio
+      const servicio = sessionStorage.getItem("servicio_titulo") || "";
+      switch(servicio.toLowerCase()) {
+        case "reparación de computadoras":
+        case "reparacion":
+          data.garantia = form.garantia?.value || "";
+          data.razon_no_garantia = form.razon_no_garantia?.value || "";
+          data.modelo = form.modelo?.value || "";
+          data.falla = form.falla?.value || "";
+          break;
+
+        case "mantenimiento":
+          data.tipo_equipo = form.tipo_equipo?.value || "";
+          data.frecuencia = form.frecuencia?.value || "";
+          break;
+
+        case "formateo":
+          data.sistema = form.sistema?.value || "";
+          data.respaldo = form.respaldo?.value || "";
+          break;
+
+        case "cámaras":
+        case "camaras":
+          data.tipoInstalacion = form.tipoInstalacion?.value || "";
+          data.ubicacionCamara = form.ubicacionCamara?.value || "";
+          data.numeroCamaras = form.numeroCamaras?.value || "";
+          break;
+
+        case "redes":
+          data.tipoRed = form.tipoRed?.value || "";
+          data.alcance = form.alcance?.value || "";
+          data.ubicacionRed = form.ubicacionRed?.value || "";
+          break;
+      }
 
       try {
         await addDoc(collection(db, "trabajos"), data);
@@ -295,8 +434,6 @@
         `;
         mensajeExito.style.display = "block";
         form.reset();
-        campoJustificacion.classList.add("oculto");
-        camposEquipo.classList.add("oculto");
         servicioBanner.scrollIntoView({ behavior: "smooth" });
 
         const btnCopiar = document.getElementById("btnCopiar");
