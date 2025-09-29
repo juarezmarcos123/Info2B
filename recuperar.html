@@ -37,7 +37,7 @@
     }
 
     main {
-      max-width: 600px;
+      max-width: 500px;
       margin: 3rem auto;
       padding: 2rem;
       background: #1c1c1c;
@@ -90,16 +90,24 @@
       display: none;
       font-size: 1.1rem;
       margin-top: 2rem;
+      text-align: center;
     }
 
-    code {
+    .codigo-container {
       background: #2c2c2c;
-      padding: 0.4rem 0.7rem;
-      border-radius: 6px;
-      font-size: 1.2rem;
-      display: inline-block;
-      margin-top: 0.5rem;
-      font-family: monospace;
+      padding: 1rem;
+      border-radius: 8px;
+      margin: 1rem 0;
+      border: 2px solid #00e676;
+    }
+
+    .codigo {
+      font-family: 'Courier New', monospace;
+      font-size: 1.5rem;
+      font-weight: bold;
+      letter-spacing: 2px;
+      color: #00e676;
+      margin: 0.5rem 0;
     }
 
     .botones {
@@ -139,49 +147,28 @@
       padding: 1rem;
       border-radius: 6px;
       border-left: 4px solid #ff5252;
-    }
-
-    .exito {
-      color: #a5f2c4;
-      background: rgba(0, 230, 118, 0.1);
-      padding: 1rem;
-      border-radius: 6px;
-      border-left: 4px solid #00e676;
-    }
-
-    .info-adicional {
-      background: rgba(0, 229, 255, 0.1);
-      padding: 1rem;
-      border-radius: 6px;
-      margin-top: 1rem;
-      border-left: 4px solid #00e5ff;
-    }
-
-    .trabajos-lista {
-      margin-top: 1rem;
-    }
-
-    .trabajo-item {
-      background: rgba(255, 255, 255, 0.05);
-      padding: 0.8rem;
-      margin-bottom: 0.5rem;
-      border-radius: 6px;
-      border-left: 3px solid #64ffda;
+      text-align: center;
     }
 
     .btn-copiar {
       background: #2979ff;
       color: white;
       border: none;
-      padding: 0.4rem 0.8rem;
-      border-radius: 4px;
+      padding: 0.6rem 1.2rem;
+      border-radius: 6px;
       cursor: pointer;
-      margin-left: 0.5rem;
-      font-size: 0.9rem;
+      font-size: 1rem;
+      margin-top: 0.5rem;
+      width: 100%;
+      transition: background 0.3s;
     }
 
     .btn-copiar:hover {
       background: #1565c0;
+    }
+
+    .btn-copiar.copiado {
+      background: #00c853;
     }
 
     .cargando {
@@ -222,7 +209,7 @@
   <main>
     <h2>Recuperar Código de Seguimiento</h2>
     <p style="text-align: center; color: #ccc; margin-bottom: 2rem;">
-      Ingresa tu número de DPI para recuperar tus códigos de seguimiento
+      Ingresa tu número de DPI para recuperar tu código de seguimiento
     </p>
     
     <form id="formRecuperacion">
@@ -232,7 +219,7 @@
        pattern="^\d{4}\s\d{5}\s\d{4}$"
        title="Debe ingresar el DPI con espacios. Ej: 1234 56789 0101" />
 
-      <button type="submit" id="btnBuscar">Buscar códigos</button>
+      <button type="submit" id="btnBuscar">Buscar código</button>
     </form>
 
     <div id="resultado"></div>
@@ -284,7 +271,7 @@
         btnBuscar.disabled = true;
         btnBuscar.innerHTML = '<div class="spinner"></div>Buscando...';
         
-        // Consulta SIMPLIFICADA - solo por DPI para evitar el error de índice
+        // Consulta por DPI
         const trabajosRef = collection(db, "trabajos");
         const q = query(trabajosRef, where("dpi", "==", dpi));
         
@@ -292,21 +279,23 @@
 
         // Restaurar botón
         btnBuscar.disabled = false;
-        btnBuscar.innerHTML = 'Buscar códigos';
+        btnBuscar.innerHTML = 'Buscar código';
 
         if (querySnapshot.empty) {
           mostrarError("❌ No se encontraron trabajos con ese DPI.");
           return;
         }
 
-        mostrarResultados(querySnapshot, dpi);
+        // Tomar el primer trabajo encontrado (el más reciente)
+        const primerTrabajo = querySnapshot.docs[0].data();
+        mostrarCodigo(primerTrabajo.codigo_seguimiento);
 
       } catch (error) {
         console.error("Error:", error);
         
         // Restaurar botón en caso de error
         btnBuscar.disabled = false;
-        btnBuscar.innerHTML = 'Buscar códigos';
+        btnBuscar.innerHTML = 'Buscar código';
         
         if (error.message.includes('index')) {
           mostrarError("Error temporal del sistema. Por favor, intenta nuevamente en unos momentos.");
@@ -321,67 +310,17 @@
       resultado.style.display = 'block';
     }
 
-    function mostrarResultados(querySnapshot, dpi) {
-      // Convertir a array y ordenar manualmente por fecha
-      const trabajosArray = [];
-      querySnapshot.forEach(doc => {
-        trabajosArray.push({
-          id: doc.id,
-          ...doc.data()
-        });
-      });
-
-      // Ordenar por fecha manualmente (más reciente primero)
-      trabajosArray.sort((a, b) => {
-        const fechaA = a.fecha_ingreso?.toDate?.() || new Date(0);
-        const fechaB = b.fecha_ingreso?.toDate?.() || new Date(0);
-        return fechaB - fechaA;
-      });
-
-      let html = `
-        <div class="exito">
-          <h3 style="color:#64ffda; margin-top: 0;">✅ Códigos encontrados</h3>
-          <p>Se encontraron <strong>${trabajosArray.length}</strong> trabajo(s) para el DPI: <strong>${dpi}</strong></p>
-        </div>
-        
-        <div class="trabajos-lista">
-      `;
-
-      trabajosArray.forEach((trabajo, index) => {
-        const fecha = trabajo.fecha_ingreso?.toDate?.() || new Date();
-        const fechaFormateada = fecha.toLocaleDateString('es-GT', {
-          year: 'numeric',
-          month: 'long',
-          day: 'numeric'
-        });
-        
-        // Determinar color del estado
-        let colorEstado = '#ffa726'; // amarillo por defecto (pendiente)
-        if (trabajo.estado?.toLowerCase().includes('proceso')) colorEstado = '#29b6f6';
-        if (trabajo.estado?.toLowerCase().includes('completado')) colorEstado = '#66bb6a';
-        if (trabajo.estado?.toLowerCase().includes('entregado')) colorEstado = '#00e676';
-        
-        html += `
-          <div class="trabajo-item">
-            <p><strong>Servicio:</strong> ${trabajo.servicio_solicitado || 'No especificado'}</p>
-            <p><strong>Fecha de ingreso:</strong> ${fechaFormateada}</p>
-            <p><strong>Estado:</strong> <span style="color:${colorEstado}">${trabajo.estado || 'Pendiente'}</span></p>
-            <p>
-              <strong>Código de seguimiento:</strong> 
-              <br>
-              <code id="codigo-${index}">${trabajo.codigo_seguimiento}</code>
-              <button class="btn-copiar" onclick="copiarCodigo('codigo-${index}')">📋 Copiar</button>
-            </p>
+    function mostrarCodigo(codigo) {
+      resultado.innerHTML = `
+        <div style="text-align: center;">
+          <h3 style="color:#64ffda; margin-top: 0;">✅ Código encontrado</h3>
+          <p>Tu código de seguimiento es:</p>
+          
+          <div class="codigo-container">
+            <div class="codigo" id="codigoRecuperado">${codigo}</div>
           </div>
-        `;
-      });
-
-      html += `
-        </div>
-        
-        <div class="info-adicional">
-          <p><strong>💡 ¿Qué hacer con tu código?</strong></p>
-          <p>Usa tu código de seguimiento en la página de <a href="seguimiento.html" style="color:#64ffda;">Seguimiento</a> para ver el estado actual de tu trabajo.</p>
+          
+          <button class="btn-copiar" onclick="copiarCodigo()" id="btnCopiar">📋 Copiar código</button>
         </div>
         
         <div class="botones">
@@ -389,30 +328,42 @@
           <a href="index.html" class="inicio">Volver al Inicio</a>
         </div>
       `;
-
-      resultado.innerHTML = html;
       resultado.style.display = 'block';
     }
   </script>
 
   <script>
-    function copiarCodigo(idElemento) {
-      const codigo = document.getElementById(idElemento).innerText;
+    function copiarCodigo() {
+      const codigo = document.getElementById("codigoRecuperado").innerText;
+      const btnCopiar = document.getElementById("btnCopiar");
+      
       navigator.clipboard.writeText(codigo)
         .then(() => {
           // Mostrar feedback visual
-          const btn = event.target;
-          const originalText = btn.innerHTML;
-          btn.innerHTML = '✅ Copiado';
-          btn.style.background = '#00c853';
+          btnCopiar.innerHTML = '✅ Código copiado';
+          btnCopiar.classList.add('copiado');
           
           setTimeout(() => {
-            btn.innerHTML = originalText;
-            btn.style.background = '#2979ff';
+            btnCopiar.innerHTML = '📋 Copiar código';
+            btnCopiar.classList.remove('copiado');
           }, 2000);
         })
         .catch(() => {
-          alert("No se pudo copiar el código. Intenta seleccionarlo manualmente.");
+          // Fallback para navegadores que no soportan clipboard API
+          const tempInput = document.createElement('input');
+          tempInput.value = codigo;
+          document.body.appendChild(tempInput);
+          tempInput.select();
+          document.execCommand('copy');
+          document.body.removeChild(tempInput);
+          
+          btnCopiar.innerHTML = '✅ Código copiado';
+          btnCopiar.classList.add('copiado');
+          
+          setTimeout(() => {
+            btnCopiar.innerHTML = '📋 Copiar código';
+            btnCopiar.classList.remove('copiado');
+          }, 2000);
         });
     }
   </script>
