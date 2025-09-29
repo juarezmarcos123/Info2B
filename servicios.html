@@ -184,7 +184,6 @@
       <a href="servicios.html">Servicios</a>
       <a href="seguimiento.html">Seguimiento</a>
       <a href="blog.html">Blog</a>
-      <a href="contacto.html">Contacto</a>
     </nav>
   </header>
 
@@ -203,7 +202,7 @@
       <span class="cerrar">&times;</span>
       <h2 id="modalTitulo"></h2>
       <p id="modalDescripcion"></p>
-      <p style="color: #64ffda; font-weight:bold">💰 Precio estimado: <span id="modalPrecio"></span></p>
+      <p style="color: #64ffda; font-weight:bold"> Precio estimado: <span id="modalPrecio"></span></p>
       <a id="btnSolicitar" class="solicitar-btn" href="#">Solicitar este servicio</a>
     </div>
   </div>
@@ -242,7 +241,7 @@
         div.innerHTML = `
           <h2>${s.titulo}</h2>
           <p>${s.descripcion_corta}</p>
-          <p class="precio">💰 ${s.precio}</p>
+          <p class="precio"> ${s.precio}</p>
           <button class="ver-mas" data-id="${id}">Ver más</button>
         `;
         contenedor.appendChild(div);
