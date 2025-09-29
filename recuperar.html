@@ -183,6 +183,28 @@
     .btn-copiar:hover {
       background: #1565c0;
     }
+
+    .cargando {
+      text-align: center;
+      color: #00e5ff;
+      padding: 1rem;
+    }
+
+    .spinner {
+      border: 3px solid #f3f3f3;
+      border-top: 3px solid #00e676;
+      border-radius: 50%;
+      width: 20px;
+      height: 20px;
+      animation: spin 1s linear infinite;
+      display: inline-block;
+      margin-right: 10px;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
   </style>
 </head>
 <body>
@@ -210,7 +232,7 @@
        pattern="^\d{4}\s\d{5}\s\d{4}$"
        title="Debe ingresar el DPI con espacios. Ej: 1234 56789 0101" />
 
-      <button type="submit">Buscar códigos</button>
+      <button type="submit" id="btnBuscar">Buscar códigos</button>
     </form>
 
     <div id="resultado"></div>
@@ -218,7 +240,7 @@
 
   <script type="module">
     import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js';
-    import { getFirestore, collection, query, where, getDocs, orderBy } from 'https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore.js';
+    import { getFirestore, collection, query, where, getDocs } from 'https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore.js';
 
     const firebaseConfig = {
       apiKey: "AIzaSyBJoYFUAJLkaeXA4Lu6T_GujtIgs96Ka0I",
@@ -234,6 +256,7 @@
 
     const form = document.getElementById("formRecuperacion");
     const resultado = document.getElementById("resultado");
+    const btnBuscar = document.getElementById("btnBuscar");
 
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
@@ -257,13 +280,19 @@
       }
 
       try {
+        // Mostrar estado de carga
+        btnBuscar.disabled = true;
+        btnBuscar.innerHTML = '<div class="spinner"></div>Buscando...';
+        
+        // Consulta SIMPLIFICADA - solo por DPI para evitar el error de índice
         const trabajosRef = collection(db, "trabajos");
-        const q = query(trabajosRef, 
-          where("dpi", "==", dpi),
-          orderBy("fecha_ingreso", "desc")
-        );
+        const q = query(trabajosRef, where("dpi", "==", dpi));
         
         const querySnapshot = await getDocs(q);
+
+        // Restaurar botón
+        btnBuscar.disabled = false;
+        btnBuscar.innerHTML = 'Buscar códigos';
 
         if (querySnapshot.empty) {
           mostrarError("❌ No se encontraron trabajos con ese DPI.");
@@ -274,39 +303,73 @@
 
       } catch (error) {
         console.error("Error:", error);
-        mostrarError(`Error al buscar: ${error.message}`);
+        
+        // Restaurar botón en caso de error
+        btnBuscar.disabled = false;
+        btnBuscar.innerHTML = 'Buscar códigos';
+        
+        if (error.message.includes('index')) {
+          mostrarError("Error temporal del sistema. Por favor, intenta nuevamente en unos momentos.");
+        } else {
+          mostrarError(`Error al buscar: ${error.message}`);
+        }
       }
     });
 
     function mostrarError(mensaje) {
       resultado.innerHTML = `<div class="error">${mensaje}</div>`;
       resultado.style.display = 'block';
-      resultado.className = 'error';
     }
 
     function mostrarResultados(querySnapshot, dpi) {
+      // Convertir a array y ordenar manualmente por fecha
+      const trabajosArray = [];
+      querySnapshot.forEach(doc => {
+        trabajosArray.push({
+          id: doc.id,
+          ...doc.data()
+        });
+      });
+
+      // Ordenar por fecha manualmente (más reciente primero)
+      trabajosArray.sort((a, b) => {
+        const fechaA = a.fecha_ingreso?.toDate?.() || new Date(0);
+        const fechaB = b.fecha_ingreso?.toDate?.() || new Date(0);
+        return fechaB - fechaA;
+      });
+
       let html = `
         <div class="exito">
           <h3 style="color:#64ffda; margin-top: 0;">✅ Códigos encontrados</h3>
-          <p>Se encontraron <strong>${querySnapshot.size}</strong> trabajo(s) para el DPI: <strong>${dpi}</strong></p>
+          <p>Se encontraron <strong>${trabajosArray.length}</strong> trabajo(s) para el DPI: <strong>${dpi}</strong></p>
         </div>
         
         <div class="trabajos-lista">
       `;
 
-      querySnapshot.forEach((doc, index) => {
-        const data = doc.data();
-        const fecha = data.fecha_ingreso?.toDate?.() || new Date();
-        const fechaFormateada = fecha.toLocaleDateString('es-GT');
+      trabajosArray.forEach((trabajo, index) => {
+        const fecha = trabajo.fecha_ingreso?.toDate?.() || new Date();
+        const fechaFormateada = fecha.toLocaleDateString('es-GT', {
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric'
+        });
+        
+        // Determinar color del estado
+        let colorEstado = '#ffa726'; // amarillo por defecto (pendiente)
+        if (trabajo.estado?.toLowerCase().includes('proceso')) colorEstado = '#29b6f6';
+        if (trabajo.estado?.toLowerCase().includes('completado')) colorEstado = '#66bb6a';
+        if (trabajo.estado?.toLowerCase().includes('entregado')) colorEstado = '#00e676';
         
         html += `
           <div class="trabajo-item">
-            <p><strong>Servicio:</strong> ${data.servicio_solicitado || 'No especificado'}</p>
-            <p><strong>Fecha:</strong> ${fechaFormateada}</p>
-            <p><strong>Estado:</strong> ${data.estado || 'Pendiente'}</p>
+            <p><strong>Servicio:</strong> ${trabajo.servicio_solicitado || 'No especificado'}</p>
+            <p><strong>Fecha de ingreso:</strong> ${fechaFormateada}</p>
+            <p><strong>Estado:</strong> <span style="color:${colorEstado}">${trabajo.estado || 'Pendiente'}</span></p>
             <p>
-              <strong>Código:</strong> 
-              <code id="codigo-${index}">${data.codigo_seguimiento}</code>
+              <strong>Código de seguimiento:</strong> 
+              <br>
+              <code id="codigo-${index}">${trabajo.codigo_seguimiento}</code>
               <button class="btn-copiar" onclick="copiarCodigo('codigo-${index}')">📋 Copiar</button>
             </p>
           </div>
