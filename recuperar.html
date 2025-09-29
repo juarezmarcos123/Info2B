@@ -137,7 +137,6 @@
       <a href="servicios.html">Servicios</a>
       <a href="seguimiento.html">Seguimiento</a>
       <a href="blog.html">Blog</a>
-      <a href="contacto.html">Contacto</a>
     </nav>
   </header>
 
@@ -193,7 +192,7 @@
       const dpi = document.getElementById("dpi").value.trim();
 
       if (!dpi || !metodo) {
-        resultado.innerHTML = "<span class='error'>⚠️ Por favor complete todos los campos.</span>";
+        resultado.innerHTML = "<span class='error'> Por favor complete todos los campos.</span>";
         resultado.style.display = 'block';
         return;
       }
@@ -217,7 +216,7 @@
 
         if (metodo === "correo") {
           resultado.innerHTML = `
-            <h3 style="color:#64ffda;">🔐 Código encontrado</h3>
+            <h3 style="color:#64ffda;"> Código encontrado</h3>
             <p><strong>Código de seguimiento:</strong></p>
             <code id="codigoRecuperado">${codigo}</code>
             <button onclick="copiarCodigo()" style="margin-top: 1rem; padding: 0.4rem 0.8rem; background:#00e676; color:#000; border:none; border-radius:6px; cursor:pointer;">📋 Copiar</button>
@@ -233,7 +232,7 @@
         }
 
       } catch (error) {
-        resultado.innerHTML = `<span class='error'>❌ Error: ${error.message}</span>`;
+        resultado.innerHTML = `<span class='error'> Error: ${error.message}</span>`;
         resultado.style.display = 'block';
       }
     });
@@ -243,8 +242,8 @@
     function copiarCodigo() {
       const codigo = document.getElementById("codigoRecuperado").innerText;
       navigator.clipboard.writeText(codigo)
-        .then(() => alert("✅ Código copiado al portapapeles"))
-        .catch(() => alert("❌ No se pudo copiar el código"));
+        .then(() => alert(" Código copiado al portapapeles"))
+        .catch(() => alert(" No se pudo copiar el código"));
     }
   </script>
 </body>
