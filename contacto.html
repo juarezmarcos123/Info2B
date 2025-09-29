@@ -233,15 +233,16 @@
     const servicioInput = document.getElementById("servicio_solicitado");
 
 	// Mostrar servicio seleccionado desde sessionStorage
-	const titulo = sessionStorage.getItem("servicio_titulo");
-	const precio = sessionStorage.getItem("servicio_precio");
+  // Mostrar servicio seleccionado desde sessionStorage
+  const titulo = sessionStorage.getItem("servicio_titulo");
+  const precio = sessionStorage.getItem("servicio_precio");
 
-	if (titulo && precio) {
-	  const textoServicio = ${titulo} - Q${precio};
-	  servicioTitulo.textContent = textoServicio;
-	  servicioInput.value = textoServicio;
-	  servicioBanner.style.display = "block";
-	}
+  if (titulo && precio) {
+    const textoServicio = `${titulo} - Q${precio}`;
+    servicioTitulo.textContent = textoServicio;
+    servicioInput.value = textoServicio;
+    servicioBanner.style.display = "block";
+  }
 
     document.getElementById("garantia").addEventListener("change", (e) => {
       campoJustificacion.classList.toggle("oculto", e.target.value !== "no");
@@ -295,11 +296,6 @@
         mensajeExito.style.display = "block";
         form.reset();
         campoJustificacion.classList.add("oculto");
-        
-        // Mantener el servicio seleccionado después del envío
-        if (servicioParam) {
-          servicioInput.value = decodeURIComponent(servicioParam);
-        }
         
         form.scrollIntoView({ behavior: "smooth" });
 
