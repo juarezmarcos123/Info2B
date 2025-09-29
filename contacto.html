@@ -45,13 +45,8 @@
       grid-template-columns: 1fr 1fr;
       gap: 1.5rem;
     }
-    form .full {
-      grid-column: 1 / -1;
-    }
-    label {
-      font-weight: bold;
-      color: #80cbc4;
-    }
+    form .full { grid-column: 1 / -1; }
+    label { font-weight: bold; color: #80cbc4; }
     input, select, textarea {
       width: 100%;
       padding: 0.7rem;
@@ -72,16 +67,8 @@
       font-weight: bold;
       cursor: pointer;
     }
-    button:hover {
-      background: #00c853;
-    }
-    .checkbox {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      font-size: 0.9rem;
-      color: #ccc;
-    }
+    button:hover { background: #00c853; }
+    .checkbox { display: flex; align-items: center; gap: 0.5rem; font-size: 0.9rem; color: #ccc; }
     #mensaje-exito {
       margin-top: 2rem;
       background: #1b2a21;
@@ -92,9 +79,7 @@
       display: none;
       font-size: 1.1rem;
     }
-    .oculto {
-      display: none;
-    }
+    .oculto { display: none; }
     .servicio-seleccionado {
       background: rgba(0, 229, 255, 0.1);
       padding: 1rem;
@@ -120,7 +105,7 @@
     <h1>Formulario de Solicitud</h1>
     
     <!-- Mostrar el servicio seleccionado -->
-    <div id="servicioBanner" class="servicio-seleccionado" style="display: none;">
+    <div id="servicioBanner" class="servicio-seleccionado oculto">
       <strong>Servicio seleccionado:</strong>
       <span id="servicioTitulo"></span>
     </div>
@@ -142,49 +127,57 @@
         <label for="telefono">Teléfono</label>
         <input type="tel" id="telefono" name="telefono" required />
       </div>
+
+      <!-- Servicio solicitado -->
       <div class="full">
         <label for="servicio_solicitado">Servicio solicitado</label>
         <input type="text" id="servicio_solicitado" name="servicio_solicitado" readonly style="background: #333;" />
       </div>
-      <div>
-        <label for="tipo_equipo">Tipo de equipo</label>
-        <select id="tipo_equipo" name="tipo_equipo" required>
-          <option value="">-- Selecciona uno --</option>
-          <option>Redes</option>
-          <option>Laptop</option>
-          <option>PC</option>
-          <option>Tablet</option>
-          <option>Otros</option>
-        </select>
+
+      <!-- Campos dependientes solo si se trata de reparación o equipo -->
+      <div id="camposEquipo" class="oculto">
+        <div>
+          <label for="tipo_equipo">Tipo de equipo</label>
+          <select id="tipo_equipo" name="tipo_equipo">
+            <option value="">-- Selecciona uno --</option>
+            <option>Redes</option>
+            <option>Laptop</option>
+            <option>PC</option>
+            <option>Tablet</option>
+            <option>Otros</option>
+          </select>
+        </div>
+        <div>
+          <label for="marca">Marca</label>
+          <input type="text" id="marca" name="marca" />
+        </div>
+        <div>
+          <label for="modelo">Modelo</label>
+          <input type="text" id="modelo" name="modelo" />
+        </div>
+        <div>
+          <label for="serie">N° de Serie</label>
+          <input type="text" id="serie" name="serie" />
+        </div>
+        <div>
+          <label for="garantia">¿El equipo tiene garantía?</label>
+          <select id="garantia" name="garantia">
+            <option value="">-- Selecciona una opción --</option>
+            <option value="sí">Sí</option>
+            <option value="no">No</option>
+          </select>
+        </div>
+        <div id="campo_justificacion" class="full oculto">
+          <label for="razon_no_garantia">¿Por qué no lo ha enviado a garantía?</label>
+          <input type="text" id="razon_no_garantia" name="razon_no_garantia" placeholder="Especifica si aplica..." />
+        </div>
       </div>
-      <div>
-        <label for="marca">Marca</label>
-        <input type="text" id="marca" name="marca" required />
-      </div>
-      <div>
-        <label for="modelo">Modelo</label>
-        <input type="text" id="modelo" name="modelo" required />
-      </div>
-      <div>
-        <label for="serie">N° de Serie</label>
-        <input type="text" id="serie" name="serie" required />
-      </div>
-      <div>
-        <label for="garantia">¿El equipo tiene garantía?</label>
-        <select id="garantia" name="garantia" required>
-          <option value="">-- Selecciona una opción --</option>
-          <option value="sí">Sí</option>
-          <option value="no">No</option>
-        </select>
-      </div>
-      <div id="campo_justificacion" class="full oculto">
-        <label for="razon_no_garantia">¿Por qué no lo ha enviado a garantía?</label>
-        <input type="text" id="razon_no_garantia" name="razon_no_garantia" placeholder="Especifica si aplica..." />
-      </div>
+
       <div class="full">
-        <label for="problema">Descripción del problema</label>
+        <label for="problema">Descripción del problema / detalles del servicio</label>
         <textarea id="problema" name="problema" rows="3" required></textarea>
       </div>
+
       <div>
         <label for="prioridad">Prioridad del caso</label>
         <select id="prioridad" name="prioridad">
@@ -206,6 +199,7 @@
       </div>
       <button type="submit">Enviar solicitud</button>
     </form>
+
     <div id="mensaje-exito"></div>
   </main>
 
@@ -231,18 +225,24 @@
     const servicioBanner = document.getElementById("servicioBanner");
     const servicioTitulo = document.getElementById("servicioTitulo");
     const servicioInput = document.getElementById("servicio_solicitado");
+    const camposEquipo = document.getElementById("camposEquipo");
 
-	// Mostrar servicio seleccionado desde sessionStorage
-  // Mostrar servicio seleccionado desde sessionStorage
-  const titulo = sessionStorage.getItem("servicio_titulo");
-  const precio = sessionStorage.getItem("servicio_precio");
+    // Mostrar servicio seleccionado desde sessionStorage
+    const titulo = sessionStorage.getItem("servicio_titulo");
+    const precio = sessionStorage.getItem("servicio_precio");
 
-  if (titulo && precio) {
-    const textoServicio = `${titulo} - Q${precio}`;
-    servicioTitulo.textContent = textoServicio;
-    servicioInput.value = textoServicio;
-    servicioBanner.style.display = "block";
-  }
+    if (titulo && precio) {
+      const textoServicio = `${titulo} - Q${precio}`;
+      servicioTitulo.textContent = textoServicio;
+      servicioInput.value = textoServicio;
+      servicioBanner.classList.remove("oculto");
+
+      // Mostrar campos de equipo solo si el servicio es de tipo reparación/equipo
+      const serviciosConEquipo = ["Reparación", "Mantenimiento de PC", "Redes", "Soporte Técnico"];
+      if (serviciosConEquipo.includes(titulo)) {
+        camposEquipo.classList.remove("oculto");
+      }
+    }
 
     document.getElementById("garantia").addEventListener("change", (e) => {
       campoJustificacion.classList.toggle("oculto", e.target.value !== "no");
@@ -265,11 +265,11 @@
         dpi: form.dpi.value.trim(),
         correo: form.correo.value.trim(),
         telefono: form.telefono.value.trim(),
-        tipo_equipo: form.tipo_equipo.value,
-        marca: form.marca.value.trim(),
-        modelo: form.modelo.value.trim(),
-        serie: form.serie.value.trim(),
-        garantia: form.garantia.value,
+        tipo_equipo: form.tipo_equipo?.value || "",
+        marca: form.marca?.value || "",
+        modelo: form.modelo?.value || "",
+        serie: form.serie?.value || "",
+        garantia: form.garantia?.value || "",
         razon_no_garantia: form.razon_no_garantia?.value || "",
         problema: form.problema.value.trim(),
         prioridad: form.prioridad.value,
@@ -296,23 +296,15 @@
         mensajeExito.style.display = "block";
         form.reset();
         campoJustificacion.classList.add("oculto");
-        
-        form.scrollIntoView({ behavior: "smooth" });
+        camposEquipo.classList.add("oculto");
+        servicioBanner.scrollIntoView({ behavior: "smooth" });
 
         const btnCopiar = document.getElementById("btnCopiar");
         const codigoSpan = document.getElementById("codigoCopiar");
-
         btnCopiar.addEventListener("click", () => {
           navigator.clipboard.writeText(codigoSpan.textContent)
-            .then(() => {
-              btnCopiar.textContent = "✅ Copiado";
-              setTimeout(() => {
-                btnCopiar.textContent = "📋 Copiar";
-              }, 2000);
-            })
-            .catch(() => {
-              btnCopiar.textContent = "❌ Error";
-            });
+            .then(() => { btnCopiar.textContent = "✅ Copiado"; setTimeout(() => { btnCopiar.textContent = "📋 Copiar"; }, 2000); })
+            .catch(() => { btnCopiar.textContent = "❌ Error"; });
         });
 
       } catch (error) {
