@@ -220,18 +220,18 @@
         const infoServicio = generarInfoServicio(trabajo);
 
         resultadoDiv.innerHTML = `
-          <h3 style="color:#64ffda;">🔍 Detalles del trabajo</h3>
+          <h3 style="color:#64ffda;"> Detalles del trabajo</h3>
           <div class="campo-destacado">
-            <p><strong>📌 Cliente:</strong> ${trabajo.nombre_completo || "No registrado"}</p>
-            <p><strong>📞 Contacto:</strong> ${trabajo.telefono || "No registrado"} | ${trabajo.correo || "No registrado"}</p>
-            <p><strong>📅 Fecha de ingreso:</strong> ${fechaIngreso}</p>
-            <p><strong>📅 Fecha de entrega estimada:</strong> ${fechaEntrega}</p>
+            <p><strong> Cliente:</strong> ${trabajo.nombre_completo || "No registrado"}</p>
+            <p><strong> Contacto:</strong> ${trabajo.telefono || "No registrado"} | ${trabajo.correo || "No registrado"}</p>
+            <p><strong> Fecha de ingreso:</strong> ${fechaIngreso}</p>
+            <p><strong> Fecha de entrega estimada:</strong> ${fechaEntrega}</p>
           </div>
           
-          <p><strong>🛠 Servicio solicitado:</strong> ${trabajo.servicio_solicitado || "No registrado"}</p>
-          <p><strong>📝 Descripción del problema:</strong> ${trabajo.problema || "No registrado"}</p>
-          <p><strong>📈 Prioridad:</strong> ${trabajo.prioridad || "Normal"}</p>
-          <p><strong>📊 Estado:</strong> <span class="${estadoClass}">${trabajo.estado || "Pendiente"}</span></p>
+          <p><strong> Servicio solicitado:</strong> ${trabajo.servicio_solicitado || "No registrado"}</p>
+          <p><strong> Descripción del problema:</strong> ${trabajo.problema || "No registrado"}</p>
+          <p><strong> Prioridad:</strong> ${trabajo.prioridad || "Normal"}</p>
+          <p><strong> Estado:</strong> <span class="${estadoClass}">${trabajo.estado || "Pendiente"}</span></p>
           
           ${infoServicio}
         `;
@@ -255,7 +255,7 @@
       if (servicio.includes("reparación") || servicio.includes("reparacion")) {
         contenido = `
           <div class="info-servicio">
-            <h4>🔧 Información de Reparación</h4>
+            <h4> Información de Reparación</h4>
             <p><strong>¿Tiene garantía?:</strong> ${trabajo.garantia || "No especificado"}</p>
             ${trabajo.garantia === "No" ? `<p><strong>Motivo sin garantía:</strong> ${trabajo.razon_no_garantia || "No especificado"}</p>` : ""}
             <p><strong>Modelo del equipo:</strong> ${trabajo.modelo_equipo || "No especificado"}</p>
@@ -265,7 +265,7 @@
       } else if (servicio.includes("mantenimiento")) {
         contenido = `
           <div class="info-servicio">
-            <h4>🛠️ Información de Mantenimiento</h4>
+            <h4> Información de Mantenimiento</h4>
             <p><strong>Tipo de equipo:</strong> ${trabajo.tipo_equipo || "No especificado"}</p>
             <p><strong>Frecuencia:</strong> ${trabajo.frecuencia_mantenimiento || "No especificado"}</p>
           </div>
@@ -273,7 +273,7 @@
       } else if (servicio.includes("formateo")) {
         contenido = `
           <div class="info-servicio">
-            <h4>💻 Información de Formateo</h4>
+            <h4> Información de Formateo</h4>
             <p><strong>Sistema operativo:</strong> ${trabajo.sistema_operativo || "No especificado"}</p>
             <p><strong>Respaldo de archivos:</strong> ${trabajo.respaldo_archivos || "No especificado"}</p>
           </div>
@@ -281,7 +281,7 @@
       } else if (servicio.includes("cámara") || servicio.includes("camara")) {
         contenido = `
           <div class="info-servicio">
-            <h4>📹 Información de Cámaras</h4>
+            <h4> Información de Cámaras</h4>
             <p><strong>Tipo de instalación:</strong> ${trabajo.tipo_instalacion || "No especificado"}</p>
             <p><strong>Ubicación:</strong> ${trabajo.ubicacion_camara || "No especificado"}</p>
             <p><strong>Número de cámaras:</strong> ${trabajo.numero_camaras || "No especificado"}</p>
@@ -290,7 +290,7 @@
       } else if (servicio.includes("red")) {
         contenido = `
           <div class="info-servicio">
-            <h4>📡 Información de Redes</h4>
+            <h4> Información de Redes</h4>
             <p><strong>Tipo de red:</strong> ${trabajo.tipo_red || "No especificado"}</p>
             <p><strong>Alcance requerido:</strong> ${trabajo.alcance_red || "No especificado"}</p>
             <p><strong>Ubicación:</strong> ${trabajo.ubicacion_red || "No especificado"}</p>
@@ -299,7 +299,7 @@
       } else {
         contenido = `
           <div class="info-servicio">
-            <h4>ℹ️ Información del Servicio</h4>
+            <h4> Información del Servicio</h4>
             <p>No hay información adicional disponible para este servicio.</p>
           </div>
         `;
