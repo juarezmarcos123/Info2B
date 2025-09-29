@@ -79,7 +79,7 @@
       display: none;
       font-size: 1.1rem;
     }
-    .oculto { display: none; }
+    .oculto { display: none !important; }
     .servicio-seleccionado {
       background: rgba(0, 229, 255, 0.1);
       padding: 1rem;
@@ -96,6 +96,7 @@
       background: rgba(0, 229, 255, 0.05);
       border-radius: 8px;
       margin-top: 1rem;
+      border: 1px solid rgba(0, 229, 255, 0.2);
     }
     .campo-especifico .full { grid-column: 1 / -1; }
   </style>
@@ -151,6 +152,7 @@
         <div>
           <label for="garantia">¿Tiene garantía?</label>
           <select id="garantia" name="garantia">
+            <option value="">-- Seleccione --</option>
             <option value="Si">Sí</option>
             <option value="No">No</option>
           </select>
@@ -162,8 +164,8 @@
         </div>
         
         <div>
-          <label for="modelo">Modelo del equipo:</label>
-          <input type="text" id="modelo" name="modelo" />
+          <label for="modelo_reparacion">Modelo del equipo:</label>
+          <input type="text" id="modelo_reparacion" name="modelo_reparacion" />
         </div>
         
         <div class="full">
@@ -175,8 +177,8 @@
       <!-- ======== Campos para Mantenimiento ======== -->
       <div id="campos-mantenimiento" class="campo-especifico oculto">
         <div>
-          <label for="tipo_equipo">Tipo de equipo:</label>
-          <input type="text" id="tipo_equipo" name="tipo_equipo" />
+          <label for="tipo_equipo_mantenimiento">Tipo de equipo:</label>
+          <input type="text" id="tipo_equipo_mantenimiento" name="tipo_equipo_mantenimiento" />
         </div>
         
         <div>
@@ -193,12 +195,13 @@
       <div id="campos-formateo" class="campo-especifico oculto">
         <div>
           <label for="sistema">Sistema operativo:</label>
-          <input type="text" id="sistema" name="sistema" />
+          <input type="text" id="sistema" name="sistema" placeholder="Ej: Windows 10, Windows 11, Linux..." />
         </div>
         
         <div>
           <label for="respaldo">¿Requiere respaldo de archivos?</label>
           <select id="respaldo" name="respaldo">
+            <option value="">-- Seleccione --</option>
             <option value="Si">Sí</option>
             <option value="No">No</option>
           </select>
@@ -210,6 +213,7 @@
         <div>
           <label for="tipoInstalacion">Tipo de instalación:</label>
           <select id="tipoInstalacion" name="tipoInstalacion">
+            <option value="">-- Seleccione --</option>
             <option value="Hogar">Hogar</option>
             <option value="Empresa">Empresa</option>
           </select>
@@ -217,12 +221,12 @@
         
         <div>
           <label for="ubicacionCamara">Ubicación:</label>
-          <input type="text" id="ubicacionCamara" name="ubicacionCamara" />
+          <input type="text" id="ubicacionCamara" name="ubicacionCamara" placeholder="Ej: Casa, Oficina, Local..." />
         </div>
         
         <div>
-          <label for="numeroCamaras">Número de cámaras (opcional):</label>
-          <input type="number" id="numeroCamaras" name="numeroCamaras" min="1" />
+          <label for="numeroCamaras">Número de cámaras:</label>
+          <input type="number" id="numeroCamaras" name="numeroCamaras" min="1" placeholder="Ej: 4" />
         </div>
       </div>
 
@@ -231,6 +235,7 @@
         <div>
           <label for="tipoRed">Tipo de red:</label>
           <select id="tipoRed" name="tipoRed">
+            <option value="">-- Seleccione --</option>
             <option value="Hogar">Hogar</option>
             <option value="Empresa">Empresa</option>
           </select>
@@ -238,27 +243,27 @@
         
         <div>
           <label for="alcance">Alcance requerido:</label>
-          <input type="text" id="alcance" name="alcance" />
+          <input type="text" id="alcance" name="alcance" placeholder="Ej: 100m², 2 pisos..." />
         </div>
         
         <div>
           <label for="ubicacionRed">Ubicación:</label>
-          <input type="text" id="ubicacionRed" name="ubicacionRed" />
+          <input type="text" id="ubicacionRed" name="ubicacionRed" placeholder="Ej: Casa, Oficina, Local..." />
         </div>
       </div>
 
       <!-- Campos comunes adicionales -->
       <div class="full">
         <label for="problema">Descripción del problema / detalles del servicio</label>
-        <textarea id="problema" name="problema" rows="3" required></textarea>
+        <textarea id="problema" name="problema" rows="3" required placeholder="Describe en detalle lo que necesitas..."></textarea>
       </div>
 
       <div>
         <label for="prioridad">Prioridad del caso</label>
         <select id="prioridad" name="prioridad">
-          <option>Normal</option>
-          <option>Urgente</option>
-          <option>Crítica</option>
+          <option value="Normal">Normal</option>
+          <option value="Urgente">Urgente</option>
+          <option value="Critica">Crítica</option>
         </select>
       </div>
       <div>
@@ -305,7 +310,9 @@
     const precio = sessionStorage.getItem("servicio_precio");
 
     if (titulo && precio) {
-      const textoServicio = `${titulo} - Q${precio}`;
+      // Limpiar el precio (remover "Desde" si existe)
+      const precioLimpio = precio.replace('Desde ', '').trim();
+      const textoServicio = `${titulo} - Q${precioLimpio}`;
       servicioTitulo.textContent = textoServicio;
       servicioInput.value = textoServicio;
       servicioBanner.classList.remove("oculto");
@@ -322,28 +329,18 @@
       });
 
       // Mostrar campos según el servicio
-      switch(servicio.toLowerCase()) {
-        case "reparación de computadoras":
-        case "reparacion":
-          document.getElementById("campos-reparacion").classList.remove("oculto");
-          break;
-
-        case "mantenimiento":
-          document.getElementById("campos-mantenimiento").classList.remove("oculto");
-          break;
-
-        case "formateo":
-          document.getElementById("campos-formateo").classList.remove("oculto");
-          break;
-
-        case "cámaras":
-        case "camaras":
-          document.getElementById("campos-camaras").classList.remove("oculto");
-          break;
-
-        case "redes":
-          document.getElementById("campos-redes").classList.remove("oculto");
-          break;
+      const servicioLower = servicio.toLowerCase();
+      
+      if (servicioLower.includes("reparación") || servicioLower.includes("reparacion")) {
+        document.getElementById("campos-reparacion").classList.remove("oculto");
+      } else if (servicioLower.includes("mantenimiento")) {
+        document.getElementById("campos-mantenimiento").classList.remove("oculto");
+      } else if (servicioLower.includes("formateo")) {
+        document.getElementById("campos-formateo").classList.remove("oculto");
+      } else if (servicioLower.includes("cámara") || servicioLower.includes("camara")) {
+        document.getElementById("campos-camaras").classList.remove("oculto");
+      } else if (servicioLower.includes("red")) {
+        document.getElementById("campos-redes").classList.remove("oculto");
       }
     }
 
@@ -353,7 +350,9 @@
       if (garantiaSelect) {
         garantiaSelect.addEventListener("change", (e) => {
           const motivoDiv = document.getElementById("motivoNoGarantia");
-          motivoDiv.classList.toggle("oculto", e.target.value !== "No");
+          if (motivoDiv) {
+            motivoDiv.classList.toggle("oculto", e.target.value !== "No");
+          }
         });
       }
     });
@@ -387,37 +386,27 @@
 
       // Agregar campos específicos según el servicio
       const servicio = sessionStorage.getItem("servicio_titulo") || "";
-      switch(servicio.toLowerCase()) {
-        case "reparación de computadoras":
-        case "reparacion":
-          data.garantia = form.garantia?.value || "";
-          data.razon_no_garantia = form.razon_no_garantia?.value || "";
-          data.modelo = form.modelo?.value || "";
-          data.falla = form.falla?.value || "";
-          break;
-
-        case "mantenimiento":
-          data.tipo_equipo = form.tipo_equipo?.value || "";
-          data.frecuencia = form.frecuencia?.value || "";
-          break;
-
-        case "formateo":
-          data.sistema = form.sistema?.value || "";
-          data.respaldo = form.respaldo?.value || "";
-          break;
-
-        case "cámaras":
-        case "camaras":
-          data.tipoInstalacion = form.tipoInstalacion?.value || "";
-          data.ubicacionCamara = form.ubicacionCamara?.value || "";
-          data.numeroCamaras = form.numeroCamaras?.value || "";
-          break;
-
-        case "redes":
-          data.tipoRed = form.tipoRed?.value || "";
-          data.alcance = form.alcance?.value || "";
-          data.ubicacionRed = form.ubicacionRed?.value || "";
-          break;
+      const servicioLower = servicio.toLowerCase();
+      
+      if (servicioLower.includes("reparación") || servicioLower.includes("reparacion")) {
+        data.garantia = form.garantia?.value || "";
+        data.razon_no_garantia = form.razon_no_garantia?.value || "";
+        data.modelo_equipo = form.modelo_reparacion?.value || "";
+        data.tipo_falla = form.falla?.value || "";
+      } else if (servicioLower.includes("mantenimiento")) {
+        data.tipo_equipo = form.tipo_equipo_mantenimiento?.value || "";
+        data.frecuencia_mantenimiento = form.frecuencia?.value || "";
+      } else if (servicioLower.includes("formateo")) {
+        data.sistema_operativo = form.sistema?.value || "";
+        data.respaldo_archivos = form.respaldo?.value || "";
+      } else if (servicioLower.includes("cámara") || servicioLower.includes("camara")) {
+        data.tipo_instalacion = form.tipoInstalacion?.value || "";
+        data.ubicacion_camara = form.ubicacionCamara?.value || "";
+        data.numero_camaras = form.numeroCamaras?.value || "";
+      } else if (servicioLower.includes("red")) {
+        data.tipo_red = form.tipoRed?.value || "";
+        data.alcance_red = form.alcance?.value || "";
+        data.ubicacion_red = form.ubicacionRed?.value || "";
       }
 
       try {
@@ -434,13 +423,23 @@
         `;
         mensajeExito.style.display = "block";
         form.reset();
+        
+        // Ocultar todos los campos específicos después del envío
+        document.querySelectorAll(".campo-especifico").forEach(div => {
+          div.classList.add("oculto");
+        });
+        servicioBanner.classList.add("oculto");
+        
         servicioBanner.scrollIntoView({ behavior: "smooth" });
 
         const btnCopiar = document.getElementById("btnCopiar");
         const codigoSpan = document.getElementById("codigoCopiar");
         btnCopiar.addEventListener("click", () => {
           navigator.clipboard.writeText(codigoSpan.textContent)
-            .then(() => { btnCopiar.textContent = "✅ Copiado"; setTimeout(() => { btnCopiar.textContent = "📋 Copiar"; }, 2000); })
+            .then(() => { 
+              btnCopiar.textContent = "✅ Copiado"; 
+              setTimeout(() => { btnCopiar.textContent = "📋 Copiar"; }, 2000); 
+            })
             .catch(() => { btnCopiar.textContent = "❌ Error"; });
         });
 
