@@ -5,205 +5,555 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Servicios - Info.2B</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap">
-
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
   <style>
-    body {
-      margin: 0;
-      font-family: 'Roboto', sans-serif;
-      background-color: #0f0f0f;
-      color: #f5f5f5;
+    :root {
+      --primary: #2563eb;
+      --primary-dark: #1d4ed8;
+      --secondary: #7c3aed;
+      --accent: #06b6d4;
+      --success: #10b981;
+      --dark: #0f172a;
+      --darker: #0a0f1c;
+      --light: #f8fafc;
+      --gray: #64748b;
+      --gray-light: #94a3b8;
+      --glass: rgba(255, 255, 255, 0.08);
     }
 
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: linear-gradient(135deg, var(--darker) 0%, var(--dark) 50%, #1e293b 100%);
+      color: var(--light);
+      font-family: 'Inter', sans-serif;
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    /* Header con efecto cristal mejorado */
     header {
-      background-color: #1a1a1a;
-      padding: 1rem 2rem;
+      background: rgba(15, 23, 42, 0.85);
+      backdrop-filter: blur(20px);
+      padding: 1.2rem 3rem;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.15);
     }
 
-    header h1 {
-      color: #00e5ff;
-      margin: 0;
-      font-size: 1.8rem;
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
     }
 
-    nav a {
-      color: #00e5ff;
-      margin-left: 1rem;
-      text-decoration: none;
-      font-weight: bold;
+    .logo h1 {
+      font-size: 1.6rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
     }
 
-    nav a:hover {
-      text-decoration: underline;
-    }
-
-    .contenedor {
-      max-width: 1200px;
-      margin: auto;
-      padding: 2rem;
-    }
-
-    .contenedor h1 {
-      font-size: 2.5rem;
-      margin-bottom: 2rem;
-      color: #00e5ff;
-      text-align: center;
-    }
-
-    #listaServicios {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    nav {
+      display: flex;
       gap: 2rem;
     }
 
-    .servicio-box {
-      background: #1f1f1f;
-      padding: 1.5rem;
-      border-radius: 15px;
-      box-shadow: 0 0 15px rgba(0,255,255,0.1);
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    nav a {
+      color: var(--gray-light);
+      text-decoration: none;
+      font-weight: 500;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      transition: all 0.3s ease;
       position: relative;
     }
 
-    .servicio-box:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 0 25px rgba(0,255,255,0.3);
+    nav a:hover {
+      color: var(--light);
+      background: rgba(37, 99, 235, 0.15);
     }
 
-    .servicio-box h2 {
-      color: #4dd0e1;
-      margin-bottom: 1rem;
+    nav a.active {
+      color: var(--primary);
+      background: rgba(37, 99, 235, 0.2);
     }
 
-    .servicio-box p {
-      margin: 0.5rem 0;
-      color: #cccccc;
-    }
-
-    .precio {
-      color: #00e676;
-      font-weight: bold;
-    }
-
-    .ver-mas {
-      margin-top: 1rem;
-      background: #00bcd4;
-      border: none;
-      padding: 0.5rem 1rem;
-      color: #000;
-      font-weight: bold;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: background 0.3s ease;
-    }
-
-    .ver-mas:hover {
-      background: #0097a7;
-    }
-
-    footer {
-      background: #121212;
-      color: #888;
-      padding: 2rem;
+    /* Hero section con efectos de cristal */
+    .services-hero {
       text-align: center;
-      margin-top: 4rem;
+      padding: 5rem 2rem;
+      background: linear-gradient(135deg, rgba(37, 99, 235, 0.08) 0%, transparent 50%);
+      position: relative;
+      overflow: hidden;
     }
 
+    .services-hero::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--primary), transparent);
+    }
+
+    .services-hero::after {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(37, 99, 235, 0.05) 0%, transparent 70%);
+      opacity: 0;
+      animation: float 20s ease-in-out infinite;
+      z-index: -1;
+    }
+
+    .services-hero h1 {
+      font-size: 3.2rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      background: linear-gradient(135deg, var(--light) 0%, var(--accent) 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .services-hero p {
+      font-size: 1.2rem;
+      color: var(--gray-light);
+      max-width: 600px;
+      margin: 0 auto 2rem;
+    }
+
+    /* Grid de servicios con efectos de cristal mejorados */
+    .services-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      gap: 2rem;
+      margin-top: 2rem;
+    }
+
+    .service-card {
+      background: linear-gradient(145deg, rgba(37, 99, 235, 0.05) 0%, rgba(6, 182, 212, 0.05) 100%);
+      backdrop-filter: blur(15px);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 20px;
+      padding: 2.5rem;
+      transition: all 0.4s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .service-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--primary), var(--accent));
+      transform: scaleX(0);
+      transition: transform 0.3s ease;
+    }
+
+    .service-card::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.08), transparent);
+      transition: left 0.6s ease;
+    }
+
+    .service-card:hover::before {
+      transform: scaleX(1);
+    }
+
+    .service-card:hover::after {
+      left: 100%;
+    }
+
+    .service-card:hover {
+      transform: translateY(-8px);
+      border-color: rgba(37, 99, 235, 0.4);
+      box-shadow: 
+        0 20px 40px rgba(37, 99, 235, 0.15),
+        0 0 0 1px rgba(37, 99, 235, 0.1);
+    }
+
+    /* Efecto de partículas en hover */
+    .service-card:hover .service-icon {
+      transform: scale(1.1);
+      filter: drop-shadow(0 8px 16px rgba(37, 99, 235, 0.3));
+    }
+
+    .service-icon {
+      width: 70px;
+      height: 70px;
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.8rem;
+      margin-bottom: 1.5rem;
+      color: white;
+      transition: all 0.4s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .service-icon::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(255, 255, 255, 0.2) 0%, transparent 70%);
+      opacity: 0;
+      transition: opacity 0.4s ease;
+    }
+
+    .service-card:hover .service-icon::before {
+      opacity: 1;
+    }
+
+    .service-card h3 {
+      font-size: 1.4rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      color: var(--light);
+      position: relative;
+    }
+
+    .service-card h3::after {
+      content: '';
+      position: absolute;
+      bottom: -8px;
+      left: 0;
+      width: 40px;
+      height: 2px;
+      background: var(--primary);
+      transition: width 0.3s ease;
+    }
+
+    .service-card:hover h3::after {
+      width: 60px;
+    }
+
+    .service-card p {
+      color: var(--gray-light);
+      margin-bottom: 1.5rem;
+      line-height: 1.7;
+    }
+
+    .service-price {
+      display: inline-block;
+      background: rgba(16, 185, 129, 0.15);
+      color: var(--success);
+      padding: 0.6rem 1.2rem;
+      border-radius: 20px;
+      font-weight: 600;
+      font-size: 1.1rem;
+      margin-bottom: 1.5rem;
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      backdrop-filter: blur(10px);
+    }
+
+    .service-btn {
+      width: 100%;
+      background: linear-gradient(135deg, rgba(37, 99, 235, 0.15), rgba(6, 182, 212, 0.1));
+      color: var(--primary);
+      border: 1px solid rgba(37, 99, 235, 0.3);
+      padding: 0.8rem 1.5rem;
+      border-radius: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+      backdrop-filter: blur(10px);
+    }
+
+    .service-btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      transition: left 0.5s ease;
+    }
+
+    .service-btn:hover::before {
+      left: 100%;
+    }
+
+    .service-btn:hover {
+      background: linear-gradient(135deg, rgba(37, 99, 235, 0.25), rgba(6, 182, 212, 0.2));
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(37, 99, 235, 0.2);
+    }
+
+    /* Modal con efectos de cristal */
     .modal {
       display: none;
       position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: rgba(0,0,0,0.85);
-      z-index: 999;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(10, 15, 28, 0.95);
+      backdrop-filter: blur(10px);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+
+    .modal-content {
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.95) 0%, rgba(15, 23, 42, 0.95) 100%);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 20px;
+      padding: 3rem;
+      max-width: 500px;
+      width: 90%;
+      position: relative;
+      box-shadow: 
+        0 25px 50px rgba(37, 99, 235, 0.15),
+        0 0 0 1px rgba(37, 99, 235, 0.1);
+      backdrop-filter: blur(20px);
+      animation: modalAppear 0.4s ease-out;
+    }
+
+    @keyframes modalAppear {
+      from { 
+        opacity: 0; 
+        transform: scale(0.8) translateY(20px); 
+      }
+      to { 
+        opacity: 1; 
+        transform: scale(1) translateY(0); 
+      }
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 1rem;
+      right: 1.5rem;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: var(--gray-light);
+      font-size: 1.5rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      width: 35px;
+      height: 35px;
+      border-radius: 50%;
+      display: flex;
       align-items: center;
       justify-content: center;
     }
 
-    .modal-content {
-      background: #1e1e1e;
-      padding: 2rem;
-      border-radius: 15px;
-      width: 90%;
-      max-width: 500px;
-      color: #fff;
-      position: relative;
-      animation: fadeIn 0.4s ease;
+    .modal-close:hover {
+      color: var(--light);
+      background: rgba(255, 255, 255, 0.2);
+      transform: rotate(90deg);
     }
 
-    .cerrar {
-      position: absolute;
-      top: 10px;
-      right: 15px;
-      font-size: 26px;
-      color: #f44336;
-      cursor: pointer;
+    .modal h2 {
+      font-size: 1.8rem;
+      margin-bottom: 1rem;
+      color: var(--light);
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
     }
 
-    .cerrar:hover {
-      color: #ff7961;
+    .modal p {
+      color: var(--gray-light);
+      line-height: 1.6;
+      margin-bottom: 1.5rem;
     }
 
-    .solicitar-btn {
-      margin-top: 1.5rem;
+    .modal-price {
+      font-size: 1.3rem;
+      font-weight: 600;
+      color: var(--success);
+      margin-bottom: 2rem;
+      background: rgba(16, 185, 129, 0.15);
+      padding: 0.8rem 1.5rem;
+      border-radius: 12px;
       display: inline-block;
-      background-color: #00e676;
-      color: #000;
-      padding: 0.6rem 1.2rem;
-      border-radius: 10px;
-      font-weight: bold;
-      text-decoration: none;
-      transition: background 0.3s ease;
+      border: 1px solid rgba(16, 185, 129, 0.3);
     }
 
-    .solicitar-btn:hover {
-      background-color: #00c853;
+    .modal-btn {
+      width: 100%;
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      color: white;
+      border: none;
+      padding: 1rem 2rem;
+      border-radius: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
     }
 
-    @keyframes fadeIn {
-      from { opacity: 0; transform: scale(0.95); }
-      to { opacity: 1; transform: scale(1); }
+    .modal-btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      transition: left 0.5s ease;
     }
 
-    @media (max-width: 600px) {
-      .contenedor h1 {
-        font-size: 1.8rem;
+    .modal-btn:hover::before {
+      left: 100%;
+    }
+
+    .modal-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px rgba(37, 99, 235, 0.4);
+    }
+
+    /* Footer con efecto cristal */
+    footer {
+      background: rgba(10, 15, 28, 0.9);
+      backdrop-filter: blur(10px);
+      text-align: center;
+      padding: 3rem 2rem;
+      margin-top: 4rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    footer p {
+      color: var(--gray);
+      margin-bottom: 0.5rem;
+    }
+
+    /* Animaciones */
+    @keyframes float {
+      0%, 100% {
+        transform: translateY(0) translateX(0);
+        opacity: 0.3;
+      }
+      50% {
+        transform: translateY(-20px) translateX(10px);
+        opacity: 0.5;
+      }
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      header {
+        padding: 1rem;
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      nav {
+        gap: 1rem;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+
+      .services-hero h1 {
+        font-size: 2.5rem;
+      }
+
+      .services-hero p {
+        font-size: 1.1rem;
+      }
+
+      .services-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .service-card {
+        padding: 2rem;
+      }
+
+      .modal-content {
+        padding: 2rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .services-hero h1 {
+        font-size: 2rem;
+      }
+
+      .services-container {
+        padding: 1rem;
       }
     }
   </style>
 </head>
 <body>
   <header>
-    <h1>Info.2B</h1>
+    <div class="logo">
+      <h1>Info.2B</h1>
+    </div>
     <nav>
       <a href="index.html">Inicio</a>
-      <a href="servicios.html">Servicios</a>
+      <a href="servicios.html" class="active">Servicios</a>
       <a href="seguimiento.html">Seguimiento</a>
       <a href="blog.html">Blog</a>
     </nav>
   </header>
 
-  <main class="contenedor">
+  <section class="services-hero">
     <h1>Nuestros Servicios</h1>
-    <div id="listaServicios"></div>
+    <p>Soluciones tecnológicas profesionales diseñadas para optimizar tu experiencia digital</p>
+  </section>
+
+  <main class="services-container">
+    <div id="listaServicios" class="services-grid"></div>
   </main>
 
   <footer>
-    &copy; 2025 Info.2B - Soluciones hechas a tu medida
+    <p>&copy; 2025 Info.2B - Soluciones Tecnológicas Profesionales</p>
+    <p>Expertos en reparación y mantenimiento de equipos</p>
   </footer>
 
   <!-- Modal -->
   <div id="modalServicio" class="modal">
     <div class="modal-content">
-      <span class="cerrar">&times;</span>
+      <button class="modal-close">&times;</button>
       <h2 id="modalTitulo"></h2>
       <p id="modalDescripcion"></p>
-      <p style="color: #64ffda; font-weight:bold"> Precio estimado: <span id="modalPrecio"></span></p>
-      <a id="btnSolicitar" class="solicitar-btn" href="#">Solicitar este servicio</a>
+      <p class="modal-price">Precio: <span id="modalPrecio"></span></p>
+      <a id="btnSolicitar" class="modal-btn">Solicitar este servicio</a>
     </div>
   </div>
 
@@ -225,6 +575,27 @@
   const db = firebase.firestore();
   const serviciosCache = {};
 
+  // Iconos para servicios
+  const servicioIcons = {
+    'reparación': '🔧',
+    'mantenimiento': '🛠️',
+    'formateo': '💻',
+    'cámaras': '📹',
+    'camaras': '📹',
+    'redes': '📡',
+    'default': '⚡'
+  };
+
+  function getServicioIcon(titulo) {
+    const tituloLower = titulo.toLowerCase();
+    for (const [key, icon] of Object.entries(servicioIcons)) {
+      if (tituloLower.includes(key)) {
+        return icon;
+      }
+    }
+    return servicioIcons.default;
+  }
+
   async function cargarServicios() {
     try {
       const snapshot = await db.collection("servicios").get();
@@ -236,13 +607,16 @@
         const id = doc.id;
         serviciosCache[id] = s;
 
+        const icon = getServicioIcon(s.titulo);
+
         const div = document.createElement("div");
-        div.className = "servicio-box";
+        div.className = "service-card";
         div.innerHTML = `
-          <h2>${s.titulo}</h2>
+          <div class="service-icon">${icon}</div>
+          <h3>${s.titulo}</h3>
           <p>${s.descripcion_corta}</p>
-          <p class="precio"> ${s.precio}</p>
-          <button class="ver-mas" data-id="${id}">Ver más</button>
+          <div class="service-price">${s.precio}</div>
+          <button class="service-btn" data-id="${id}">Ver detalles</button>
         `;
         contenedor.appendChild(div);
       });
@@ -254,7 +628,7 @@
   }
 
   function initModales() {
-    document.querySelectorAll(".ver-mas").forEach(btn => {
+    document.querySelectorAll(".service-btn").forEach(btn => {
       btn.addEventListener("click", () => {
         const id = btn.dataset.id;
         const s = serviciosCache[id];
@@ -284,7 +658,8 @@
     document.getElementById("modalServicio").style.display = "flex";
   }
 
-  document.querySelector(".cerrar").onclick = () =>
+  // Cerrar modal
+  document.querySelector(".modal-close").onclick = () =>
     document.getElementById("modalServicio").style.display = "none";
 
   window.onclick = e => {
