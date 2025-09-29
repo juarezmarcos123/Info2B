@@ -104,6 +104,33 @@
       from { opacity: 0; transform: translateY(15px); }
       to { opacity: 1; transform: translateY(0); }
     }
+    
+    /* Estilos para la información específica del servicio */
+    .info-servicio {
+      background: rgba(0, 229, 255, 0.05);
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin-top: 1.5rem;
+      border-left: 3px solid #00e5ff;
+    }
+    
+    .info-servicio h4 {
+      color: #00e5ff;
+      margin-top: 0;
+      margin-bottom: 1rem;
+    }
+    
+    .campo-destacado {
+      background: rgba(0, 230, 118, 0.1);
+      padding: 0.8rem;
+      border-radius: 6px;
+      margin: 0.5rem 0;
+    }
+    
+    .estado-pendiente { color: #ffa726; }
+    .estado-proceso { color: #29b6f6; }
+    .estado-completado { color: #66bb6a; }
+    .estado-entregado { color: #00e676; }
   </style>
 </head>
 <body>
@@ -183,15 +210,34 @@
         const fechaIngreso = trabajo.fecha_ingreso?.toDate?.().toLocaleDateString?.() || "No disponible";
         const fechaEntrega = trabajo.fecha_entrega?.toDate?.().toLocaleDateString?.() || "No registrada";
 
+        // Determinar clase CSS para el estado
+        let estadoClass = "estado-pendiente";
+        if (trabajo.estado?.toLowerCase().includes("proceso")) estadoClass = "estado-proceso";
+        if (trabajo.estado?.toLowerCase().includes("completado")) estadoClass = "estado-completado";
+        if (trabajo.estado?.toLowerCase().includes("entregado")) estadoClass = "estado-entregado";
+
+        // Generar información específica del servicio
+        const infoServicio = generarInfoServicio(trabajo);
+
         resultadoDiv.innerHTML = `
           <h3 style="color:#64ffda;">🔍 Detalles del trabajo</h3>
-          <p><strong>📌 Cliente:</strong> ${trabajo.nombre_completo || "No registrado"}</p>
-          <p><strong>💻 Equipo:</strong> ${trabajo.tipo_equipo || "No registrado"}</p>
-          <p><strong>🛠 Problema:</strong> ${trabajo.problema || "No registrado"}</p>
-          <p><strong>📈 Estado:</strong> <span style="color:#00e676">${trabajo.estado || "Sin estado"}</span></p>
-          <p><strong>📞 Contacto:</strong> ${trabajo.telefono || "No registrado"}</p>
-          <p><strong>📅 Fecha de ingreso:</strong> ${fechaIngreso}</p>
-          <p><strong>📅 Fecha de entrega:</strong> ${fechaEntrega}</p>
+          <div class="campo-destacado">
+            <p><strong>📌 Cliente:</strong> ${trabajo.nombre_completo || "No registrado"}</p>
+            <p><strong>📞 Contacto:</strong> ${trabajo.telefono || "No registrado"} | ${trabajo.correo || "No registrado"}</p>
+            <p><strong>📅 Fecha de ingreso:</strong> ${fechaIngreso}</p>
+            <p><strong>📅 Fecha de entrega estimada:</strong> ${fechaEntrega}</p>
+          </div>
+          
+          <p><strong>🛠 Servicio solicitado:</strong> ${trabajo.servicio_solicitado || "No registrado"}</p>
+          <p><strong>📝 Descripción del problema:</strong> ${trabajo.problema || "No registrado"}</p>
+          <p><strong>📈 Prioridad:</strong> ${trabajo.prioridad || "Normal"}</p>
+          <p><strong>📊 Estado:</strong> <span class="${estadoClass}">${trabajo.estado || "Pendiente"}</span></p>
+          
+          ${infoServicio}
+          
+          <div style="margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid #333;">
+            <p><strong>🔢 Código de seguimiento:</strong> ${trabajo.codigo_seguimiento || "No disponible"}</p>
+          </div>
         `;
 
         resultadoDiv.style.display = 'block';
@@ -203,6 +249,68 @@
         noEncontrado.style.display = 'none';
       }
     });
+
+    // Función para generar información específica del servicio
+    function generarInfoServicio(trabajo) {
+      const servicio = trabajo.servicio_solicitado?.toLowerCase() || "";
+      let contenido = "";
+      
+      // Detectar el tipo de servicio y mostrar información relevante
+      if (servicio.includes("reparación") || servicio.includes("reparacion")) {
+        contenido = `
+          <div class="info-servicio">
+            <h4>🔧 Información de Reparación</h4>
+            <p><strong>¿Tiene garantía?:</strong> ${trabajo.garantia || "No especificado"}</p>
+            ${trabajo.garantia === "No" ? `<p><strong>Motivo sin garantía:</strong> ${trabajo.razon_no_garantia || "No especificado"}</p>` : ""}
+            <p><strong>Modelo del equipo:</strong> ${trabajo.modelo_equipo || "No especificado"}</p>
+            <p><strong>Tipo de falla:</strong> ${trabajo.tipo_falla || "No especificado"}</p>
+          </div>
+        `;
+      } else if (servicio.includes("mantenimiento")) {
+        contenido = `
+          <div class="info-servicio">
+            <h4>🛠️ Información de Mantenimiento</h4>
+            <p><strong>Tipo de equipo:</strong> ${trabajo.tipo_equipo || "No especificado"}</p>
+            <p><strong>Frecuencia:</strong> ${trabajo.frecuencia_mantenimiento || "No especificado"}</p>
+          </div>
+        `;
+      } else if (servicio.includes("formateo")) {
+        contenido = `
+          <div class="info-servicio">
+            <h4>💻 Información de Formateo</h4>
+            <p><strong>Sistema operativo:</strong> ${trabajo.sistema_operativo || "No especificado"}</p>
+            <p><strong>Respaldo de archivos:</strong> ${trabajo.respaldo_archivos || "No especificado"}</p>
+          </div>
+        `;
+      } else if (servicio.includes("cámara") || servicio.includes("camara")) {
+        contenido = `
+          <div class="info-servicio">
+            <h4>📹 Información de Cámaras</h4>
+            <p><strong>Tipo de instalación:</strong> ${trabajo.tipo_instalacion || "No especificado"}</p>
+            <p><strong>Ubicación:</strong> ${trabajo.ubicacion_camara || "No especificado"}</p>
+            <p><strong>Número de cámaras:</strong> ${trabajo.numero_camaras || "No especificado"}</p>
+          </div>
+        `;
+      } else if (servicio.includes("red")) {
+        contenido = `
+          <div class="info-servicio">
+            <h4>📡 Información de Redes</h4>
+            <p><strong>Tipo de red:</strong> ${trabajo.tipo_red || "No especificado"}</p>
+            <p><strong>Alcance requerido:</strong> ${trabajo.alcance_red || "No especificado"}</p>
+            <p><strong>Ubicación:</strong> ${trabajo.ubicacion_red || "No especificado"}</p>
+          </div>
+        `;
+      } else {
+        contenido = `
+          <div class="info-servicio">
+            <h4>ℹ️ Información del Servicio</h4>
+            <p>No hay información adicional disponible para este servicio.</p>
+          </div>
+        `;
+      }
+      
+      return contenido;
+    }
   });
 </script>
 </body>
