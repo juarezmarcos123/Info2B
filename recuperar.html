@@ -58,7 +58,7 @@
       margin-bottom: 0.3rem;
     }
 
-    input, select, button {
+    input, button {
       width: 100%;
       padding: 0.8rem;
       margin-bottom: 1rem;
@@ -74,6 +74,7 @@
       color: #000;
       font-weight: bold;
       cursor: pointer;
+      transition: background 0.3s;
     }
 
     button:hover {
@@ -98,6 +99,7 @@
       font-size: 1.2rem;
       display: inline-block;
       margin-top: 0.5rem;
+      font-family: monospace;
     }
 
     .botones {
@@ -114,6 +116,13 @@
       border-radius: 6px;
       font-weight: bold;
       color: #fff;
+      text-align: center;
+      flex: 1;
+      transition: opacity 0.3s;
+    }
+
+    .botones a:hover {
+      opacity: 0.9;
     }
 
     .botones a.seguimiento {
@@ -126,6 +135,53 @@
 
     .error {
       color: #ff5252;
+      background: rgba(255, 82, 82, 0.1);
+      padding: 1rem;
+      border-radius: 6px;
+      border-left: 4px solid #ff5252;
+    }
+
+    .exito {
+      color: #a5f2c4;
+      background: rgba(0, 230, 118, 0.1);
+      padding: 1rem;
+      border-radius: 6px;
+      border-left: 4px solid #00e676;
+    }
+
+    .info-adicional {
+      background: rgba(0, 229, 255, 0.1);
+      padding: 1rem;
+      border-radius: 6px;
+      margin-top: 1rem;
+      border-left: 4px solid #00e5ff;
+    }
+
+    .trabajos-lista {
+      margin-top: 1rem;
+    }
+
+    .trabajo-item {
+      background: rgba(255, 255, 255, 0.05);
+      padding: 0.8rem;
+      margin-bottom: 0.5rem;
+      border-radius: 6px;
+      border-left: 3px solid #64ffda;
+    }
+
+    .btn-copiar {
+      background: #2979ff;
+      color: white;
+      border: none;
+      padding: 0.4rem 0.8rem;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-left: 0.5rem;
+      font-size: 0.9rem;
+    }
+
+    .btn-copiar:hover {
+      background: #1565c0;
     }
   </style>
 </head>
@@ -137,26 +193,24 @@
       <a href="servicios.html">Servicios</a>
       <a href="seguimiento.html">Seguimiento</a>
       <a href="blog.html">Blog</a>
+      <a href="contacto.html">Contacto</a>
     </nav>
   </header>
 
   <main>
     <h2>Recuperar Código de Seguimiento</h2>
+    <p style="text-align: center; color: #ccc; margin-bottom: 2rem;">
+      Ingresa tu número de DPI para recuperar tus códigos de seguimiento
+    </p>
+    
     <form id="formRecuperacion">
-      <label for="metodo">¿Cómo desea recibir su código?</label>
-      <select id="metodo" required>
-        <option value="">-- Seleccione --</option>
-        <option value="correo">Correo electrónico</option>
-        <option value="whatsapp">WhatsApp</option>
-      </select>
-
-      <label for="dpi">Ingrese su número de DPI</label>
+      <label for="dpi">Número de DPI</label>
       <input type="text" id="dpi" required
        placeholder="Ej. 1234 56789 0101"
        pattern="^\d{4}\s\d{5}\s\d{4}$"
        title="Debe ingresar el DPI con espacios. Ej: 1234 56789 0101" />
 
-      <button type="submit">Recuperar código</button>
+      <button type="submit">Buscar códigos</button>
     </form>
 
     <div id="resultado"></div>
@@ -164,7 +218,7 @@
 
   <script type="module">
     import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js';
-    import { getFirestore, collection, query, where, getDocs } from 'https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore.js';
+    import { getFirestore, collection, query, where, getDocs, orderBy } from 'https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore.js';
 
     const firebaseConfig = {
       apiKey: "AIzaSyBJoYFUAJLkaeXA4Lu6T_GujtIgs96Ka0I",
@@ -186,64 +240,117 @@
 
       resultado.style.display = 'none';
       resultado.innerHTML = '';
-      resultado.classList.remove("error");
+      resultado.className = '';
 
-      const metodo = document.getElementById("metodo").value;
       const dpi = document.getElementById("dpi").value.trim();
 
-      if (!dpi || !metodo) {
-        resultado.innerHTML = "<span class='error'> Por favor complete todos los campos.</span>";
-        resultado.style.display = 'block';
+      if (!dpi) {
+        mostrarError("Por favor ingresa tu número de DPI.");
+        return;
+      }
+
+      // Validar formato de DPI
+      const dpiPattern = /^\d{4}\s\d{5}\s\d{4}$/;
+      if (!dpiPattern.test(dpi)) {
+        mostrarError("El formato del DPI no es válido. Debe ser: 1234 56789 0101");
         return;
       }
 
       try {
         const trabajosRef = collection(db, "trabajos");
-        const q = query(trabajosRef, where("dpi", "==", dpi));
+        const q = query(trabajosRef, 
+          where("dpi", "==", dpi),
+          orderBy("fecha_ingreso", "desc")
+        );
+        
         const querySnapshot = await getDocs(q);
 
         if (querySnapshot.empty) {
-          resultado.innerHTML = "<span class='error'>❌ No se encontró ningún código con ese DPI.</span>";
-          resultado.style.display = 'block';
+          mostrarError("❌ No se encontraron trabajos con ese DPI.");
           return;
         }
 
-        let codigo;
-        querySnapshot.forEach(doc => {
-          const data = doc.data();
-          codigo = data.codigo_seguimiento;
-        });
-
-        if (metodo === "correo") {
-          resultado.innerHTML = `
-            <h3 style="color:#64ffda;">Código encontrado</h3>
-            <p><strong>Código de seguimiento:</strong></p>
-            <code id="codigoRecuperado">${codigo}</code>
-            <button onclick="copiarCodigo()" style="margin-top: 1rem; padding: 0.4rem 0.8rem; background:#00e676; color:#000; border:none; border-radius:6px; cursor:pointer;">Copiar</button>
-            <div class="botones">
-            </div>
-          `;
-          resultado.style.display = 'block';
-        } else if (metodo === "whatsapp") {
-          const mensaje = `Hola, soy usuario de Info.2B. Mi código de seguimiento es: ${codigo}`;
-          const numero = "502" + dpi.slice(0, 8); // Ajusta según el formato de teléfono si lo deseas
-          const url = `https://wa.me/${numero}?text=${encodeURIComponent(mensaje)}`;
-          window.open(url, "_blank");
-        }
+        mostrarResultados(querySnapshot, dpi);
 
       } catch (error) {
-        resultado.innerHTML = `<span class='error'> Error: ${error.message}</span>`;
-        resultado.style.display = 'block';
+        console.error("Error:", error);
+        mostrarError(`Error al buscar: ${error.message}`);
       }
     });
+
+    function mostrarError(mensaje) {
+      resultado.innerHTML = `<div class="error">${mensaje}</div>`;
+      resultado.style.display = 'block';
+      resultado.className = 'error';
+    }
+
+    function mostrarResultados(querySnapshot, dpi) {
+      let html = `
+        <div class="exito">
+          <h3 style="color:#64ffda; margin-top: 0;">✅ Códigos encontrados</h3>
+          <p>Se encontraron <strong>${querySnapshot.size}</strong> trabajo(s) para el DPI: <strong>${dpi}</strong></p>
+        </div>
+        
+        <div class="trabajos-lista">
+      `;
+
+      querySnapshot.forEach((doc, index) => {
+        const data = doc.data();
+        const fecha = data.fecha_ingreso?.toDate?.() || new Date();
+        const fechaFormateada = fecha.toLocaleDateString('es-GT');
+        
+        html += `
+          <div class="trabajo-item">
+            <p><strong>Servicio:</strong> ${data.servicio_solicitado || 'No especificado'}</p>
+            <p><strong>Fecha:</strong> ${fechaFormateada}</p>
+            <p><strong>Estado:</strong> ${data.estado || 'Pendiente'}</p>
+            <p>
+              <strong>Código:</strong> 
+              <code id="codigo-${index}">${data.codigo_seguimiento}</code>
+              <button class="btn-copiar" onclick="copiarCodigo('codigo-${index}')">📋 Copiar</button>
+            </p>
+          </div>
+        `;
+      });
+
+      html += `
+        </div>
+        
+        <div class="info-adicional">
+          <p><strong>💡 ¿Qué hacer con tu código?</strong></p>
+          <p>Usa tu código de seguimiento en la página de <a href="seguimiento.html" style="color:#64ffda;">Seguimiento</a> para ver el estado actual de tu trabajo.</p>
+        </div>
+        
+        <div class="botones">
+          <a href="seguimiento.html" class="seguimiento">Ir a Seguimiento</a>
+          <a href="index.html" class="inicio">Volver al Inicio</a>
+        </div>
+      `;
+
+      resultado.innerHTML = html;
+      resultado.style.display = 'block';
+    }
   </script>
 
   <script>
-    function copiarCodigo() {
-      const codigo = document.getElementById("codigoRecuperado").innerText;
+    function copiarCodigo(idElemento) {
+      const codigo = document.getElementById(idElemento).innerText;
       navigator.clipboard.writeText(codigo)
-        .then(() => alert(" Código copiado al portapapeles"))
-        .catch(() => alert(" No se pudo copiar el código"));
+        .then(() => {
+          // Mostrar feedback visual
+          const btn = event.target;
+          const originalText = btn.innerHTML;
+          btn.innerHTML = '✅ Copiado';
+          btn.style.background = '#00c853';
+          
+          setTimeout(() => {
+            btn.innerHTML = originalText;
+            btn.style.background = '#2979ff';
+          }, 2000);
+        })
+        .catch(() => {
+          alert("No se pudo copiar el código. Intenta seleccionarlo manualmente.");
+        });
     }
   </script>
 </body>
