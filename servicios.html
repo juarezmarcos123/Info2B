@@ -202,41 +202,37 @@
         0 0 0 1px rgba(37, 99, 235, 0.1);
     }
 
-    /* Efecto de partículas en hover */
-    .service-card:hover .service-icon {
-      transform: scale(1.1);
-      filter: drop-shadow(0 8px 16px rgba(37, 99, 235, 0.3));
-    }
-
-    .service-icon {
-      width: 70px;
-      height: 70px;
-      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-      border-radius: 16px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.8rem;
+    /* Imágenes de servicio */
+    .service-image {
+      width: 100%;
+      height: 200px;
+      border-radius: 12px;
       margin-bottom: 1.5rem;
-      color: white;
+      object-fit: cover;
+      border: 1px solid rgba(255, 255, 255, 0.1);
       transition: all 0.4s ease;
       position: relative;
       overflow: hidden;
     }
 
-    .service-icon::before {
+    .service-card:hover .service-image {
+      transform: scale(1.02);
+      border-color: rgba(37, 99, 235, 0.3);
+    }
+
+    .service-image::after {
       content: '';
       position: absolute;
-      top: -50%;
-      left: -50%;
-      width: 200%;
-      height: 200%;
-      background: radial-gradient(circle, rgba(255, 255, 255, 0.2) 0%, transparent 70%);
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, rgba(37, 99, 235, 0.1), transparent);
       opacity: 0;
       transition: opacity 0.4s ease;
     }
 
-    .service-card:hover .service-icon::before {
+    .service-card:hover .service-image::after {
       opacity: 1;
     }
 
@@ -503,6 +499,10 @@
         padding: 2rem;
       }
 
+      .service-image {
+        height: 180px;
+      }
+
       .modal-content {
         padding: 2rem;
       }
@@ -515,6 +515,10 @@
 
       .services-container {
         padding: 1rem;
+      }
+
+      .service-image {
+        height: 160px;
       }
     }
   </style>
@@ -575,25 +579,27 @@
   const db = firebase.firestore();
   const serviciosCache = {};
 
-  // Iconos para servicios
-  const servicioIcons = {
-    'reparación': '🔧',
-    'mantenimiento': '🛠️',
-    'formateo': '💻',
-    'cámaras': '📹',
-    'camaras': '📹',
-    'redes': '📡',
-    'default': '⚡'
+  // Mapeo de imágenes para cada tipo de servicio
+  const servicioImages = {
+    'cámaras de seguridad': 'https://github.com/juarezmarcos123/Info2B/blob/main/img/Camara-seguridad.webp?raw=true',
+    'camaras de seguridad': 'https://github.com/juarezmarcos123/Info2B/blob/main/img/Camara-seguridad.webp?raw=true',
+    'formateo': 'https://github.com/juarezmarcos123/Info2B/blob/main/img/formateo_computadoras.jpg?raw=true',
+    'mantenimiento': 'https://github.com/juarezmarcos123/Info2B/blob/main/img/mantenimiento_computadora.jpg?raw=true',
+    'redes hogar': 'https://github.com/juarezmarcos123/Info2B/blob/main/img/red_casa.jpg?raw=true',
+    'redes empresa': 'https://github.com/juarezmarcos123/Info2B/blob/main/img/red_completa.jpg?raw=true',
+    'redes': 'https://github.com/juarezmarcos123/Info2B/blob/main/img/red_casa.jpg?raw=true',
+    'reparación': 'https://github.com/juarezmarcos123/Info2B/blob/main/img/mantenimiento_computadora.jpg?raw=true',
+    'default': 'https://github.com/juarezmarcos123/Info2B/blob/main/img/mantenimiento_computadora.jpg?raw=true'
   };
 
-  function getServicioIcon(titulo) {
+  function getServicioImage(titulo) {
     const tituloLower = titulo.toLowerCase();
-    for (const [key, icon] of Object.entries(servicioIcons)) {
+    for (const [key, image] of Object.entries(servicioImages)) {
       if (tituloLower.includes(key)) {
-        return icon;
+        return image;
       }
     }
-    return servicioIcons.default;
+    return servicioImages.default;
   }
 
   async function cargarServicios() {
@@ -607,12 +613,12 @@
         const id = doc.id;
         serviciosCache[id] = s;
 
-        const icon = getServicioIcon(s.titulo);
+        const image = getServicioImage(s.titulo);
 
         const div = document.createElement("div");
         div.className = "service-card";
         div.innerHTML = `
-          <div class="service-icon">${icon}</div>
+          <img src="${image}" alt="${s.titulo}" class="service-image">
           <h3>${s.titulo}</h3>
           <p>${s.descripcion_corta}</p>
           <div class="service-price">${s.precio}</div>
