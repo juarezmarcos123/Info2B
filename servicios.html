@@ -579,23 +579,39 @@
   const db = firebase.firestore();
   const serviciosCache = {};
 
-  // Mapeo de imágenes para cada tipo de servicio
+  // Mapeo CORREGIDO de imágenes para cada tipo de servicio
   const servicioImages = {
-    'Cámaras de Seguridad': 'https://github.com/juarezmarcos123/Info2B/blob/main/img/Camara-seguridad.webp?raw=true',
+    'cámaras de seguridad': 'https://github.com/juarezmarcos123/Info2B/blob/main/img/Camara-seguridad.webp?raw=true',
+    'camaras de seguridad': 'https://github.com/juarezmarcos123/Info2B/blob/main/img/Camara-seguridad.webp?raw=true',
     'formateo': 'https://github.com/juarezmarcos123/Info2B/blob/main/img/formateo_computadoras.jpg?raw=true',
     'mantenimiento': 'https://github.com/juarezmarcos123/Info2B/blob/main/img/mantenimiento_computadora.jpg?raw=true',
-    'Conexión en casa': 'https://github.com/juarezmarcos123/Info2B/blob/main/img/red_casa.jpg?raw=true',
-    'Red completa': 'https://github.com/juarezmarcos123/Info2B/blob/main/img/red_completa.jpg?raw=true',
-    'Reparación de computadoras': 'https://github.com/juarezmarcos123/Info2B/blob/main/img/reparacion_computadoras.jpg?raw=true',
+    'red hogar': 'https://github.com/juarezmarcos123/Info2B/blob/main/img/red_casa.jpg?raw=true',
+    'redes hogar': 'https://github.com/juarezmarcos123/Info2B/blob/main/img/red_casa.jpg?raw=true',
+    'red empresa': 'https://github.com/juarezmarcos123/Info2B/blob/main/img/red_completa.jpg?raw=true',
+    'redes empresa': 'https://github.com/juarezmarcos123/Info2B/blob/main/img/red_completa.jpg?raw=true',
+    'redes': 'https://github.com/juarezmarcos123/Info2B/blob/main/img/red_completa.jpg?raw=true',
+    'reparación': 'https://github.com/juarezmarcos123/Info2B/blob/main/img/reparacion_computadoras.jpg?raw=true',
+    'reparacion': 'https://github.com/juarezmarcos123/Info2B/blob/main/img/reparacion_computadoras.jpg?raw=true',
+    'default': 'https://github.com/juarezmarcos123/Info2B/blob/main/img/mantenimiento_computadora.jpg?raw=true'
   };
 
   function getServicioImage(titulo) {
     const tituloLower = titulo.toLowerCase();
+    
+    // Buscar coincidencias exactas primero
     for (const [key, image] of Object.entries(servicioImages)) {
-      if (tituloLower.includes(key)) {
+      if (tituloLower === key.toLowerCase()) {
         return image;
       }
     }
+    
+    // Buscar coincidencias parciales
+    for (const [key, image] of Object.entries(servicioImages)) {
+      if (tituloLower.includes(key.toLowerCase())) {
+        return image;
+      }
+    }
+    
     return servicioImages.default;
   }
 
