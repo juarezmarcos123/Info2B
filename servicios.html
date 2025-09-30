@@ -579,40 +579,19 @@
   const db = firebase.firestore();
   const serviciosCache = {};
 
-  // Mapeo CORREGIDO de imágenes para cada tipo de servicio
+  // MAPEO EXACTO según los títulos en Firebase
   const servicioImages = {
-    'cámaras de seguridad': 'https://github.com/juarezmarcos123/Info2B/blob/main/img/Camara-seguridad.webp?raw=true',
-    'camaras de seguridad': 'https://github.com/juarezmarcos123/Info2B/blob/main/img/Camara-seguridad.webp?raw=true',
-    'formateo': 'https://github.com/juarezmarcos123/Info2B/blob/main/img/formateo_computadoras.jpg?raw=true',
-    'mantenimiento': 'https://github.com/juarezmarcos123/Info2B/blob/main/img/mantenimiento_computadora.jpg?raw=true',
-    'red hogar': 'https://github.com/juarezmarcos123/Info2B/blob/main/img/red_casa.jpg?raw=true',
-    'redes hogar': 'https://github.com/juarezmarcos123/Info2B/blob/main/img/red_casa.jpg?raw=true',
-    'red empresa': 'https://github.com/juarezmarcos123/Info2B/blob/main/img/red_completa.jpg?raw=true',
-    'redes empresa': 'https://github.com/juarezmarcos123/Info2B/blob/main/img/red_completa.jpg?raw=true',
-    'redes': 'https://github.com/juarezmarcos123/Info2B/blob/main/img/red_completa.jpg?raw=true',
-    'reparación': 'https://github.com/juarezmarcos123/Info2B/blob/main/img/reparacion_computadoras.jpg?raw=true',
-    'reparacion': 'https://github.com/juarezmarcos123/Info2B/blob/main/img/reparacion_computadoras.jpg?raw=true',
-    'default': 'https://github.com/juarezmarcos123/Info2B/blob/main/img/mantenimiento_computadora.jpg?raw=true'
+    'Paquete "Cámaras de Seguridad"': 'https://github.com/juarezmarcos123/Info2B/blob/main/img/Camara-seguridad.webp?raw=true',
+    'Paquete "Formateo de computadoras"': 'https://github.com/juarezmarcos123/Info2B/blob/main/img/formateo_computadoras.jpg?raw=true',
+    'Paquete "Mantenimiento preventivo"': 'https://github.com/juarezmarcos123/Info2B/blob/main/img/mantenimiento_computadora.jpg?raw=true',
+    'Paquete "Conexión en casa"': 'https://github.com/juarezmarcos123/Info2B/blob/main/img/red_casa.jpg?raw=true',
+    'Paquete "Red completa"': 'https://github.com/juarezmarcos123/Info2B/blob/main/img/red_completa.jpg?raw=true',
+    'Paquete "Reparación de computadoras"': 'https://github.com/juarezmarcos123/Info2B/blob/main/img/reparacion_computadoras.jpg?raw=true'
   };
 
   function getServicioImage(titulo) {
-    const tituloLower = titulo.toLowerCase();
-    
-    // Buscar coincidencias exactas primero
-    for (const [key, image] of Object.entries(servicioImages)) {
-      if (tituloLower === key.toLowerCase()) {
-        return image;
-      }
-    }
-    
-    // Buscar coincidencias parciales
-    for (const [key, image] of Object.entries(servicioImages)) {
-      if (tituloLower.includes(key.toLowerCase())) {
-        return image;
-      }
-    }
-    
-    return servicioImages.default;
+    // Busca coincidencia EXACTA con los títulos de Firebase
+    return servicioImages[titulo] || 'https://github.com/juarezmarcos123/Info2B/blob/main/img/mantenimiento_computadora.jpg?raw=true';
   }
 
   async function cargarServicios() {
